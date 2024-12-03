@@ -1,0 +1,52 @@
+blueprint:
+  name: Zigbee2MQTT - Tuya 1-Button Scene Switch (TS0041) [Z2M]
+  description: Automate your Tuya 1-Button Scene Switch via Zigbee2MQTT.
+  domain: automation
+  input:
+    controller:
+      name: Zigbee2MQTT Controller Name
+      description: Exact Friendly name as shown in Zigbee2MQTT (beware trailing space)
+      default: ''
+    base_topic:
+      name: (Zigbee2MQTT) Base mqtt topic
+      description: The base topic as configured in z2m (keep unless Z2M non-default configuation)
+      default: zigbee2mqtt
+    button_one_short_press:
+      name: Single Press - Button 1
+      description: Action to run on button 1 single press
+      default: []
+      selector:
+        action: {}
+    button_one_double_press:
+      name: Double Press - Button 1
+      description: Action to run on button 1 double press
+      default: []
+      selector:
+        action: {}
+    button_one_long_press:
+      name: Long Press - Button 1
+      description: Action to run on button 1  long press
+      default: []
+      selector:
+        action: {}
+mode: parallel
+max_exceeded: silent
+trigger_variables:
+  base_topic: !input base_topic
+  controller: !input controller
+trigger:
+- platform: mqtt
+  topic: '{{ base_topic ~ ''/'' ~ controller }}'
+action:
+- variables:
+    command: '{{ trigger.payload_json.action }}'
+- choose:
+  - conditions:
+    - '{{ command == ''single'' }}'
+    sequence: !input button_one_short_press
+  - conditions:
+    - '{{ command == ''double'' }}'
+    sequence: !input button_one_double_press
+  - conditions:
+    - '{{ command == ''hold'' }}'
+    sequence: !input button_one_long_press

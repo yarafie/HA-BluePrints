@@ -1,0 +1,125 @@
+blueprint:
+  name: Zigbee2MQTT - Ikea STYRBAR 4-button remote (E2001/E2002)
+  description: "This blueprint is for the IKEA STYRBAR square, 4-button remote when used with zigbee2mqtt.
+  It is for general use so all buttons can be connected to any action of your choice"
+  domain: automation
+  input:
+    controller:
+      name: Zigbee2MQTT IKEA Remote Name
+      description: IKEA STYRBAR remote to use - Exact Friendly name as shown in Zigbee2MQTT
+      default: ''
+    base_topic:
+      name: (Zigbee2MQTT) Base mqtt topic
+      description: The base topic as configured in z2m (keep unless Z2M non-default configuation)
+      default: zigbee2mqtt
+    button_on:
+      name: Brightness up button - short press
+      description: Action to run when SHORT press on brighness UP button
+      default: []
+      selector:
+        action: {}
+    button_off:
+      name: Brightness down button - short press
+      description: Action to run when SHORT press on brighness DOWN button
+      default: []
+      selector:
+        action: {}
+    button_brightness_move_up:
+      name: Brightness up button - long press
+      description: Action to run when LONG press on brighness UP button
+      default: []
+      selector:
+        action: {}
+    button_brightness_move_down:
+      name: Brightness down button - long press
+      description: Action to run when LONG press on brighness DOWN button
+      default: []
+      selector:
+        action: {}
+    button_brightness_stop:
+      name: Brightness stop button - long release press
+      description: Action to run when LONG press on brighness (up or down) is released
+      default: []
+      selector:
+        action: {}
+    button_left_click:
+      name: Left button - short press
+      description: Action to run when SHORT press on LEFT arrow button
+      default: []
+      selector:
+        action: {}
+    button_left_hold:
+      name: Left button - hold
+      description: Action to run when HOLD press on LEFT arrow button
+      default: []
+      selector:
+        action: {}
+    button_left_release:
+      name: Left button - release
+      description: Action to run when RELEASE press on LEFT arrow button
+      default: []
+      selector:
+        action: {}
+    button_right_click:
+      name: Right button - short press
+      description: Action to run when SHORT press on RIGHT arrow button
+      default: []
+      selector:
+        action: {}
+    button_right_hold:
+      name: Right button - hold
+      description: Action to run when HOLD press on RIGHT button
+      default: []
+      selector:
+        action: {}
+    button_right_release:
+      name: Right button - release
+      description: Action to run when RELEASE press on RIGHT arrow button
+      default: []
+      selector:
+        action: {}
+mode: restart
+max_exceeded: silent
+trigger_variables:
+  base_topic: !input base_topic
+  controller: !input controller
+trigger:
+- platform: mqtt
+  topic: '{{ base_topic ~ ''/'' ~ controller }}'
+action:
+  - variables:
+      command: '{{ trigger.payload_json.action }}'
+  - choose:
+      - conditions:
+          - "{{ command == 'on' }}"
+        sequence: !input "button_on"
+      - conditions:
+          - "{{ command == 'off' }}"
+        sequence: !input "button_off"
+      - conditions:
+          - "{{ command == 'brightness_move_up' }}"
+        sequence: !input "button_brightness_move_up"
+      - conditions:
+          - "{{ command == 'brightness_move_down' }}"
+        sequence: !input "button_brightness_move_down"
+      - conditions:
+          - "{{ command == 'brightness_stop' }}"
+        sequence: !input "button_brightness_stop"
+      - conditions:
+          - "{{ command == 'arrow_left_click' }}"
+        sequence: !input "button_left_click"
+      - conditions:
+          - "{{ command == 'arrow_left_hold' }}"
+        sequence: !input "button_left_hold"
+      - conditions:
+          - "{{ command == 'arrow_left_release' }}"
+        sequence: !input "button_left_release"
+      - conditions:
+          - "{{ command == 'arrow_right_click' }}"
+        sequence: !input "button_right_click"
+      - conditions:
+          - "{{ command == 'arrow_right_hold' }}"
+        sequence: !input "button_right_hold"
+      - conditions:
+          - "{{ command == 'arrow_right_release' }}"
+        sequence: !input "button_right_release"

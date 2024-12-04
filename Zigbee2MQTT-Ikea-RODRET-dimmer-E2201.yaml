@@ -1,12 +1,12 @@
 blueprint:
-  name: Zigbee2MQTT - Ikea TRADFRI on/off switch (E1743)
-  description: "This blueprint is for the IKEA TRADFRI on/off switch, 2-button remote when used with zigbee2mqtt.
+  name: Zigbee2MQTT - Ikea RODRET dimmer (E2201)
+  description: "This blueprint is for the IKEA RODRET dimmer, 2-button remote when used with zigbee2mqtt.
   It is for general use so all buttons can be connected to any action of your choice"
   domain: automation
   input:
     controller:
       name: Zigbee2MQTT IKEA Remote Name
-      description: IKEA TRADFRI on/off switch to use - Exact Friendly name as shown in Zigbee2MQTT
+      description: IKEA RODRET dimmer to use - Exact Friendly name as shown in Zigbee2MQTT
       default: ''
     base_topic:
       name: (Zigbee2MQTT) Base mqtt topic

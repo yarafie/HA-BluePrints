@@ -1,4 +1,8 @@
 blueprint:
+  homeassistant:
+     min_version: 2024.10.0
+  author: yarafie
+  domain: automation
   name: Zigbee2MQTT - Ikea STYRBAR 4-button remote (E2001/E2002)
   description: "This blueprint is for the IKEA STYRBAR square, 4-button remote when used with zigbee2mqtt.
   It is for general use so all buttons can be connected to any action of your choice"

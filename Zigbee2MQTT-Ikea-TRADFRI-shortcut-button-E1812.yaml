@@ -1,4 +1,8 @@
 blueprint:
+  homeassistant:
+    min_version: 2024.10.0
+  author: yarafie
+  domain: automation
   name: Zigbee2MQTT - Ikea TRADFRI shortcut button (E1812) [Z2M]
   description: Automate your TRADFRI shortcut button via Zigbee2MQTT.
   domain: automation

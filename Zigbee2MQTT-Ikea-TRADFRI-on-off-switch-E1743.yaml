@@ -1,5 +1,5 @@
 blueprint:
-  name: Zigbee2MQTT - Ikea TRADFRI on/off switch (E1743)
+  name: Zigbee2MQTT - Ikea TRADFRI on/off switch (E1743)(V2)
   description: "This blueprint is for the IKEA TRADFRI on/off switch, 2-button remote when used with zigbee2mqtt.
   It is for general use so all buttons can be connected to any action of your choice"
   domain: automation
@@ -8,6 +8,13 @@ blueprint:
       name: Zigbee2MQTT IKEA Remote Name
       description: IKEA TRADFRI on/off switch to use - Exact Friendly name as shown in Zigbee2MQTT
       default: ''
+      selector:
+        device:
+         filter:
+         - integration: mqtt
+           manufacturer: IKEA
+           model: TRADFRI on/off switch (E1743)
+         multiple: false
     base_topic:
       name: (Zigbee2MQTT) Base mqtt topic
       description: The base topic as configured in z2m (keep unless Z2M non-default configuation)

@@ -7,6 +7,13 @@ blueprint:
       name: Zigbee2MQTT Ikea TRADFRI shortcut button  Name
       description: Exact Friendly name as shown in Zigbee2MQTT (beware trailing space)
       default: ''
+      selector:
+        device:
+          filter:
+          - integration: mqtt
+            manufacturer: IKEA
+            model: TRADFRI shortcut button (E1812)
+          multiple: false
     base_topic:
       name: (Zigbee2MQTT) Base mqtt topic
       description: The base topic as configured in z2m (keep unless Z2M non-default configuation)

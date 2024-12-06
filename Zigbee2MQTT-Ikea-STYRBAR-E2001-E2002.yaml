@@ -8,6 +8,13 @@ blueprint:
       name: Zigbee2MQTT IKEA Remote Name
       description: IKEA STYRBAR remote to use - Exact Friendly name as shown in Zigbee2MQTT
       default: ''
+      selector:
+        device:
+          filter:
+          - integration: mqtt
+            manufacturer: IKEA
+            model: STYRBAR remote control (E2001/E2002)
+          multiple: false
     base_topic:
       name: (Zigbee2MQTT) Base mqtt topic
       description: The base topic as configured in z2m (keep unless Z2M non-default configuation)

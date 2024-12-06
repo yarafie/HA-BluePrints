@@ -1,4 +1,8 @@
 blueprint:
+  homeassistant:
+    min_version: 2024.10.0
+  author: yarafie
+  domain: automation
   name: Zigbee2MQTT - Tuya Moes Smart Knob (Operation Mode = event or command)
   description: Automate your Tuya Smart Knob - ERS-10TZBVK-AA
   domain: automation
@@ -7,6 +11,13 @@ blueprint:
       name: Zigbee2MQTT Controller Name
       description: Exact Friendly name as shown in Zigbee2MQTT (beware trailing space)
       default: ''
+      selector:
+        device:
+          filter:
+          - integration: mqtt
+            manufacturer: Tuya
+            model: Smart knob (ERS-10TZBVK-AA)
+          multiple: false
     base_topic:
       name: (Zigbee2MQTT) Base mqtt topic
       description: The base topic as configured in z2m (keep unless Z2M non-default configuation)

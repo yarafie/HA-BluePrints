@@ -6,7 +6,6 @@ blueprint:
   name: Zigbee2MQTT - Ikea STYRBAR 4-button remote (E2001/E2002)
   description: "This blueprint is for the IKEA STYRBAR square, 4-button remote when used with zigbee2mqtt.
   It is for general use so all buttons can be connected to any action of your choice"
-  domain: automation
   input:
     controller:
       name: Zigbee2MQTT IKEA Remote Name

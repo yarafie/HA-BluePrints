@@ -5,7 +5,6 @@ blueprint:
   domain: automation
   name: Zigbee2MQTT - Ikea TRADFRI shortcut button (E1812) [Z2M]
   description: Automate your TRADFRI shortcut button via Zigbee2MQTT.
-  domain: automation
   input:
     controller:
       name: Zigbee2MQTT Ikea TRADFRI shortcut button  Name

@@ -5,7 +5,6 @@ blueprint:
   domain: automation
   name: Zigbee2MQTT - Tuya 1-Button Scene Switch (TS0041) [Z2M]
   description: Automate your Tuya 1-Button Scene Switch via Zigbee2MQTT.
-  domain: automation
   input:
     controller:
       name: Zigbee2MQTT Controller Name

@@ -6,7 +6,6 @@ blueprint:
   name: Zigbee2MQTT - Ikea RODRET dimmer (E2201)(V2)
   description: "This blueprint is for the IKEA RODRET dimmer, 2-button remote when used with zigbee2mqtt.
   It is for general use so all buttons can be connected to any action of your choice"
-  domain: automation
   input:
     controller:
       name: Zigbee2MQTT IKEA Remote Name

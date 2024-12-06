@@ -5,7 +5,6 @@ blueprint:
   domain: automation
   name: Zigbee2MQTT - Tuya Moes Smart Knob (Operation Mode = event or command)
   description: Automate your Tuya Smart Knob - ERS-10TZBVK-AA
-  domain: automation
   input:
     controller:
       name: Zigbee2MQTT Controller Name

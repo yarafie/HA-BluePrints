@@ -3,9 +3,10 @@ blueprint:
     min_version: 2024.10.0
   author: yarafie
   domain: automation
-  name: Zigbee2MQTT - Ikea TRADFRI on/off switch (E1743)(V2)
+  name: Zigbee2MQTT - Ikea TRADFRI on/off switch (E1743)
   description: "This blueprint is for the IKEA TRADFRI on/off switch, 2-button remote when used with zigbee2mqtt.
   It is for general use so all buttons can be connected to any action of your choice"
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/Zigbee2MQTT-Ikea-TRADFRI-on-off-switch-E1743.yaml
   input:
     controller:
       name: Zigbee2MQTT IKEA Remote Name
@@ -52,30 +53,30 @@ blueprint:
       default: []
       selector:
         action: {}
-mode: restart
+mode: parallel
 max_exceeded: silent
 trigger_variables:
   base_topic: !input base_topic
   controller: !input controller
 trigger:
 - platform: mqtt
-  topic: '{{ base_topic ~ ''/'' ~ controller }}'
+  topic: '{{ base_topic ~ ''/'' ~ controller ~ ''/action'' }}'
 action:
   - variables:
       command: '{{ trigger.payload_json.action }}'
   - choose:
       - conditions:
-          - "{{ command == 'on' }}"
-        sequence: !input "button_on"
+          - '{{ command == ''on'' }}'
+        sequence: !input button_on
       - conditions:
-          - "{{ command == 'off' }}"
-        sequence: !input "button_off"
+          - '{{ command == ''off'' }}'
+        sequence: !input button_off
       - conditions:
-          - "{{ command == 'brightness_move_up' }}"
-        sequence: !input "button_on_long_press"
+          - '{{ command == ''brightness_move_up'' }}'
+        sequence: !input button_on_long_press
       - conditions:
-          - "{{ command == 'brightness_move_down' }}"
-        sequence: !input "button_off_long_press"
+          - '{{ command == ''brightness_move_down'' }}'
+        sequence: !input button_off_long_press
       - conditions:
-          - "{{ command == 'brightness_stop' }}"
-        sequence: !input "button_long_press_stop"
+          - '{{ command == ''brightness_stop'' }}'
+        sequence: !input button_long_press_stop

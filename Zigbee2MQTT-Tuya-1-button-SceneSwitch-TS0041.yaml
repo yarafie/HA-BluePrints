@@ -5,6 +5,7 @@ blueprint:
   domain: automation
   name: Zigbee2MQTT - Tuya 1-Button Scene Switch (TS0041) [Z2M]
   description: Automate your Tuya 1-Button Scene Switch via Zigbee2MQTT.
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/Zigbee2MQTT-Tuya-1-button-SceneSwitch-TS0041.yaml
   input:
     controller:
       name: Zigbee2MQTT Controller Name
@@ -46,7 +47,7 @@ trigger_variables:
   controller: !input controller
 trigger:
 - platform: mqtt
-  topic: '{{ base_topic ~ ''/'' ~ controller }}'
+  topic: '{{ base_topic ~ ''/'' ~ controller ~ ''/action'' }}'
 action:
 - variables:
     command: '{{ trigger.payload_json.action }}'

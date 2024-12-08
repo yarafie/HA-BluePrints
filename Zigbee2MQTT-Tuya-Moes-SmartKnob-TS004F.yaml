@@ -5,6 +5,7 @@ blueprint:
   domain: automation
   name: Zigbee2MQTT - Tuya Moes Smart Knob (Operation Mode = event or command)
   description: Automate your Tuya Smart Knob - ERS-10TZBVK-AA
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/Zigbee2MQTT-Tuya-Moes-SmartKnob-TS004F.yaml
   input:
     controller:
       name: Zigbee2MQTT Controller Name
@@ -89,7 +90,6 @@ blueprint:
       default: []
       selector:
         action: {}
-  source_url: https://dummyurl.com/new
 mode: restart
 max_exceeded: silent
 trigger_variables:
@@ -97,7 +97,7 @@ trigger_variables:
   controller: !input controller
 trigger:
 - platform: mqtt
-  topic: '{{ base_topic ~ ''/'' ~ controller }}'
+  topic: '{{ base_topic ~ ''/'' ~ controller ~ ''/action'' }}'
 action:
 - variables:
     command: '{{ trigger.payload_json.action }}'

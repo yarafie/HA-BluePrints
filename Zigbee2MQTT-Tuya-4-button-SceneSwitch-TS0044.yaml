@@ -5,6 +5,7 @@ blueprint:
   domain: automation
   name: Zigbee2MQTT - Tuya 4-Button Scene Switch (TS0044) [Z2M]
   description: Automate your Tuya 4-Button Scene Switch via Zigbee2MQTT
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/Zigbee2MQTT-Tuya-4-button-SceneSwitch-TS0044.yaml
   #Input declarations
   input:
     controller:
@@ -13,11 +14,14 @@ blueprint:
       default: ''
       selector:
         device:
-          filter:
-          - integration: mqtt
-            manufacturer: Tuya
-            model: Wireless switch with 4 buttons (TS0044)
           multiple: false
+          filter:
+            - integration: mqtt
+              manufacturer: Moes
+              model: Star Ring 4 Gang Scene Switch (ZT-SR-EU4)
+            - integration: mqtt
+              manufacturer: Tuya
+              model: Wireless switch with 4 buttons (TS0044)
     base_topic:
       name: (Zigbee2MQTT) Base mqtt topic
       description: The base topic as configured in z2m (keep unless Z2M non-default configuation)
@@ -104,7 +108,7 @@ trigger_variables:
   controller: !input controller
 trigger:
 - platform: mqtt
-  topic: '{{ base_topic ~ ''/'' ~ controller }}'
+  topic: '{{ base_topic ~ ''/'' ~ controller ~ ''/action'' }}'
 action:
 - variables:
     command: '{{ trigger.payload_json.action }}'

@@ -1,0 +1,177 @@
+# ==========================================================
+# ------------------------------
+# TRADFRI shortcut button (E1812)
+# ------------------------------
+# Action (enum)
+# The possible values are: 
+# 1. on (is published when single-clicking the button)
+# 2. off (is published when double-clicking the button) 
+# 3. brightness_move_up (is published when long-press the button)
+# 4. brightness_stop (is published when releasing ling-press the button)
+# ----------------------------------------------------------
+# simulated_brightness: Simulate a brightness value. 
+# If this device provides a
+# brightness_move_up or brightness_move_down action 
+# it is possible to specify the update interval and delta. 
+# The action_brightness_delta indicates the delta for each 
+# interval. 
+# Example:
+# simulated_brightness:
+#  delta: 20 # delta per interval, default = 20
+#  interval: 200 # interval in milliseconds, default = 200
+# ==========================================================
+blueprint:
+  homeassistant:
+    min_version: 2024.10.0
+  author: yarafie
+  domain: automation
+  name: z2m - IKEA TRADFRI shortcut button (E1812) Controls
+  source_url: https://github.com/yarafie/HA-blueprints/blob/main/z2m-IKEA-tradfri_shortcut_button_E1812-control_anything.yaml
+  description: "## Control anything with **IKEA TRADFRI shortcut button (E1812)** remotes\n\n
+
+    **Only for Zigbee2MQTT**\n\n
+
+    Available controls:\n
+    - Single press **on**\n
+    - Double press **off**\n
+    - (_Optional_) Hold **on**\n
+      Actions will be executed every\n
+      **Helper Hold delay**,\n
+      but maximum\n
+      **Helper - Max number of loops** times."
+#
+# Define UI inputs and default values
+  input:
+    remote_device:
+      name: Remote
+      description: 'Select IKEA TRADFRI shortcut button (E1812)
+        '
+      default: []
+      selector:
+        device:
+          filter:
+          - integration: mqtt
+            manufacturer: IKEA
+            model: TRADFRI shortcut button (E1812)
+          multiple: false
+    on_press_action:
+      name: Single press action (on)
+      description: 'Choose action(s) to run when **on**
+        button is **pressed**.
+        '
+      default: []
+      selector:
+        action: {}
+    on_hold_action:
+      name: Hold action (on)
+      description: 'Choose action(s) to run when **on**
+        button is **held**.
+        '
+      default: []
+      selector:
+        action: {}
+    off_press_action:
+      name: Double press action (off)
+      description: 'Choose action(s) to run when **on**
+         button is **double pressed**.
+        '
+      default: []
+      selector:
+        action: {}
+    helper_hold_delay:
+      name: Helper - Hold delay
+      description: Delay between the execution of the **Hold** action(s).
+      default: 250
+      selector:
+        number:
+          unit_of_measurement: milliseconds
+          min: 100.0
+          max: 5000.0
+          step: 10.0
+          mode: slider
+    helper_max_loops:
+      name: Helper - Max number of loops
+      description: Maximum number of loops when holding down a button.
+      default: 20
+      selector:
+        number:
+          min: 1.0
+          max: 1000.0
+          step: 1.0
+          mode: slider
+#
+# Define mode for automatiom
+mode: single
+max_exceeded: silent
+#
+# Define Triggers for automation
+triggers:
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'on'
+  id: press-on-z2m-e1812
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'off'
+  id: press-off-z2m-e1812
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_move_up
+  id: hold-on-z2m-e1812
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_stop
+  id: release-z2m-e1812
+#
+# Define actions
+actions:
+- choose:
+  - conditions:
+    - condition: trigger
+      id:
+      - press-on-z2m-e1812
+    sequence: !input on_press_action
+  - conditions:
+    - condition: trigger
+      id:
+      - press-off-z2m-e1812
+    sequence: !input off_press_action
+  - conditions:
+    - condition: trigger
+      id:
+      - hold-on-z2m-e1812
+    sequence:
+    - repeat:
+        count: !input helper_max_loops
+        sequence:
+        - parallel:
+          - sequence: !input on_hold_action
+          - sequence:
+            - choose:
+              - conditions:
+                - condition: trigger
+                  id:
+                  - hold-on-z2m-e1812
+                sequence:
+                - wait_for_trigger:
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input remote_device
+                    type: action
+                    subtype: brightness_stop
+                  timeout:
+                    milliseconds: !input helper_hold_delay
+                  continue_on_timeout: true
+                - if:
+                  - condition: template
+                    value_template: '{{ wait.trigger.idx is defined }}'
+                  then:
+                  - stop: button released

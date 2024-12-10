@@ -1,0 +1,271 @@
+# ==========================================================
+# ----------------------------------------------
+# Tuya Wireless switch with 4 buttons (TS0041)
+# Moes Star Ring 4 Gang Scene Switch (ZT-SR-EU4)
+# ----------------------------------------------
+# Action (enum)
+# The possible values are:
+#  1. 1_single
+#  2. 1_double
+#  3. 1_hold
+#  4. 2_single
+#  5. 2_double
+#  6. 2_hold
+#  7. 3_single
+#  8. 3_double
+#  9. 3_hold
+# 10. 4_single
+# 11. 4_double
+# 12. 4_hold
+# ==========================================================
+blueprint:
+  homeassistant:
+    min_version: 2024.10.0
+  author: yarafie
+  domain: automation
+  name: z2m - Tuya (TS0044) Moes (ZT-SR-EU4) 4 Button Scene Switch
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/z2m-TUYA-tuya_ts0044-moes_ZT-SR-EU4-4_button_wireless_scene_switch.yaml
+  description: Automate your Tuya or Moes 4-Button Scene Switch via Zigbee2MQTT
+#
+# Define UI and default values
+  input:
+    remote_device:
+      name: Switch
+      description: 'Select Tuya (TS0044) or Moes (ZT-SR-EU4) Wireless switch
+        '
+      default: []
+      selector:
+        device:
+          multiple: false
+          filter:
+            - integration: mqtt
+              manufacturer: Moes
+              model: Star Ring 4 Gang Scene Switch (ZT-SR-EU4)
+            - integration: mqtt
+              manufacturer: Tuya
+              model: Wireless switch with 4 buttons (TS0044)
+    #Button 1
+    button_one_short_press:
+      name: Single Press - Button 1
+      description: Action to run on button 1 (upper-left) single press
+      default: []
+      selector:
+        action: {}
+    button_one_double_press:
+      name: Double Press - Button 1
+      description: Action to run on button 1 (upper-left) double press
+      default: []
+      selector:
+        action: {}
+    button_one_long_press:
+      name: Long Press - Button 1
+      description: Action to run on button 1 (upper-left) long press
+      default: []
+      selector:
+        action: {}
+    #Button 2
+    button_two_short_press:
+      name: Single Press - Button 2
+      description: Action to run on button 2 (upper-right) single press
+      default: []
+      selector:
+        action: {}
+    button_two_double_press:
+      name: Double Press - Button 2
+      description: Action to run on button 2 (upper-right) double press
+      default: []
+      selector:
+        action: {}
+    button_two_long_press:
+      name: Long Press - Button 2
+      description: Action to run on button 2 (upper-right) long press
+      default: []
+      selector:
+        action: {}
+    #Button 3
+    button_three_short_press:
+      name: Single Press - Button 3
+      description: Action to run on button 3 (lower-left) single press
+      default: []
+      selector:
+        action: {}
+    button_three_double_press:
+      name: Double Press - Button 3
+      description: Action to run on button 3 (lower-left) double press
+      default: []
+      selector:
+        action: {}
+    button_three_long_press:
+      name: Long Press - Button 3
+      description: Action to run on button 3 (lower-left) long press
+      default: []
+      selector:
+        action: {}
+    button_four_short_press:
+      name: Single Press - Button 4
+      description: Action to run on button 4 (lower-right) single press
+      default: []
+      selector:
+        action: {}
+    button_four_double_press:
+      name: Double Press - Button 4
+      description: Action to run on button 4 (lower-right) double press
+      default: []
+      selector:
+        action: {}
+    button_four_long_press:
+      name: Long Press - Button 4
+      description: Action to run on button 4 (lower-right) long press
+      default: []
+      selector:
+        action: {}
+#
+# Define mode for automatiom
+mode: parallel
+max_exceeded: silent
+#
+# Define Triggers for automation
+triggers:
+# Button1
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '1_single'
+  id: press-1-single-z2m-ts0044
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '1_double'
+  id: press-1-double-z2m-ts0044
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '1_hold'
+  id: press-1-hold-z2m-ts0041
+# Button2
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '2_single'
+  id: press-2-single-z2m-ts0044
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '2_double'
+  id: press-2-double-z2m-ts0044
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '2_hold'
+  id: press-2-hold-z2m-ts0041
+# Button3
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '3_single'
+  id: press-3-single-z2m-ts0044
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '3_double'
+  id: press-3-double-z2m-ts0044
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '3_hold'
+  id: press-3-hold-z2m-ts0041
+# Button4
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '4_single'
+  id: press-4-single-z2m-ts0044
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '4_double'
+  id: press-4-double-z2m-ts0044
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: '4_hold'
+  id: press-4-hold-z2m-ts0041
+#
+# Define actions
+actions:
+- choose:
+  - conditions:
+# Single
+    - condition: trigger
+      id:
+      - press-1-single-z2m-ts0044
+    sequence: !input button_one_short_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-2-single-z2m-ts0044
+    sequence: !input button_two_short_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-3-single-z2m-ts0044
+    sequence: !input button_three_short_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-4-single-z2m-ts0044
+    sequence: !input button_four_short_press
+# Double
+  - conditions:
+    - condition: trigger
+      id:
+      - press-1-double-z2m-ts0044
+    sequence: !input button_one_double_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-2-double-z2m-ts0044
+    sequence: !input button_two_double_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-3-double-z2m-ts0044
+    sequence: !input button_three_double_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-4-double-z2m-ts0044
+    sequence: !input button_four_double_press
+# Hold
+  - conditions:
+    - condition: trigger
+      id:
+      - press-1-hold-z2m-ts0044
+    sequence: !input button_one_long_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-2-hold-z2m-ts0044
+    sequence: !input button_two_long_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-3-hold-z2m-ts0044
+    sequence: !input button_three_long_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-4-hold-z2m-ts0044
+    sequence: !input button_four_long_press

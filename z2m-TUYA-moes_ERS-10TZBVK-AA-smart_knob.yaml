@@ -1,0 +1,301 @@
+# ==========================================================
+# -------------------------------------------
+# Tuya Moes Smart knob (ERS-10TZBVK-AA) (TS004F)
+# -------------------------------------------
+# Device operation
+# Device can be set in two modes : COMMAND and EVENT (Current Mode is published on the operation_mode property). A triple click seems firmware dependend (no action shown) and will toggle between COMMAND and EVENT mode.
+# ----------
+# EVENT mode
+# ----------
+# --------------------------------
+# User Action  | action property |
+# --------------------------------
+# Single Click | single          |
+# Double Click | double          |
+# Hold         | hold            |
+# Rotate Left  | rotate_left     |
+# Rotate Right | rotate_right    |
+# --------------------------------
+# action_step_size, 
+# action_transition_time, 
+# action_rate 
+# are still present but show "no value"
+# --------------------------------
+# Action (enum)
+# The possible values are:
+#  1. single
+#  2. double
+#  3. hold
+#  4. rotate_left
+#  5. rotate_right
+# ----------------------------------------------------------
+# ------------
+# COMMAND mode
+# ------------
+# ---------------------------------------------------------
+# User Action               | action property             |
+# --------------------------|------------------------------
+# Single Click              | Toggle                      |
+# Rotate Left               | Brightness_Step_Up          |
+# Rotate Right              | Brightness_Step_Down        |
+# HOLD more than 3s         | Hue_Move                    |
+# UnHold button             | Hue_Stop                    |
+# Push+Hold and Rotate Left | color_temperature_step_up   |
+# Push+Hold and Rotate Left | color_temperature_step_down |
+# ---------------------------------------------------------
+# Action_Step_Size = %Numeric_Value (0_255)               |
+# Action_Rate = Keeps "No value" all the time             |
+# ---------------------------------------------------------
+# Action (enum)
+# The possible values are:
+#  1. toggle 
+#  2. brightness_step_up
+#  3. brightness_step_down 
+#  4. hue_move
+#  5. hue_stop               !! NO Action Defined
+#  6. color_temperature_step_up 
+#  7. color_temperature_step_down 
+#  8. ??saturation_move??    !! NO Trigger or Action Defined
+# ----------------------------------------------------------
+# https://www.zigbee2mqtt.io/devices/ERS-10TZBVK-AA.html
+# ==========================================================
+blueprint:
+  homeassistant:
+    min_version: 2024.10.0
+  author: yarafie
+  domain: automation
+  name: z2m - Tuya Moes Smart Knob (Operation Mode = event or command)
+  description: Automate your Tuya Smart Knob - ERS-10TZBVK-AA
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/z2m-TUYA-moes_ERS-10TZBVK-AA-smart_knob.yaml
+# Define UI and default values
+  input:
+    remote_device:
+      name: Remote
+      description: 'Selec Smart Knob to use'
+      default: []
+      selector:
+        device:
+          filter:
+          - integration: mqtt
+            manufacturer: Tuya
+            model: Smart knob (ERS-10TZBVK-AA)
+          multiple: false
+# EVENT MODE
+    event_button_short_press:
+      name: Event - Single Press
+      description: Action to run on single press (careful not to turn knob instead)
+      default: []
+      selector:
+        action: {}
+    event_button_double_press:
+      name: Event - Double Press
+      description: (Most likely won't work in command) Action to run on double press (careful not to turn knob instead)
+      default: []
+      selector:
+        action: {}
+    event_button_long_press:
+      name: Event - Long Press
+      description: Action to run on long press (at least 4 seconds - careful not to
+        turn knob instead)
+      default: []
+      selector:
+        action: {}
+    event_button_rotate_right:
+      name: Event - Rotate Right
+      description: Action to run when Smart Knob is rotated right
+      default: []
+      selector:
+        action: {}
+    event_button_rotate_left:
+      name: Event - Rotate Left
+      description: Action to run when Smart Knob is rotated left
+      default: []
+      selector:
+        action: {}
+# COMMAND MODE
+    command_button_short_press:
+      name: Command - Single Press
+      description: Action to run on single press (careful not to turn knob instead)
+      default: []
+      selector:
+        action: {}
+    command_button_rotate_right:
+      name: Command - Rotate Right
+      description: Action to run when Smart Knob is rotated right
+      default: []
+      selector:
+        action: {}
+    command_button_rotate_left:
+      name: Command - Rotate Left
+      description: Action to run when Smart Knob is rotated left
+      default: []
+      selector:
+        action: {}
+    command_button_long_press:
+      name: Command - Long Press
+      description: Action to run on long press (at least 4 seconds - careful not to
+        turn knob instead)
+      default: []
+      selector:
+        action: {}
+    command_button_long_release:
+      name: Command - Long Release
+      description: Action to run on after release of long press (at least 4 seconds - careful not to
+        turn knob instead)
+      default: []
+      selector:
+        action: {}
+    command_button_rotate_press_right:
+      name: Command - Rotate Press Right
+      description: Action to run when Smart Knob is pressed and rotated right
+      default: []
+      selector:
+        action: {}
+    command_button_rotate_press_left:
+      name: Command - Rotate Press Left
+      description: Action to run when Smart Knob is pressed and rotated left
+      default: []
+      selector:
+        action: {}
+#
+# Define mode for automatiom
+mode: restart
+max_exceeded: silent
+#
+# Define Triggers for automation
+triggers:
+#EVENT MODE
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'single'
+  id: press-single-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'double'
+  id: press-double-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'hold'
+  id: press-hold-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'rotate_right'
+  id: rotate-right-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'rotate_left'
+  id: rotate-left-z2m-ts004f
+#COMMAND MODE
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'toggle'
+  id: toggle-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'brightness_step_up'
+  id: brightness-step-up-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'brightness_step_down'
+  id: brightness-step-down-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'hue_move'
+  id: hue-move-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'hue_stop'
+  id: hue-stop-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'color_temperature_step_up'
+  id: ct-step-up-z2m-ts004f
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'color_temperature_step_down'
+  id: ct-step-down-z2m-ts004f
+#
+# Define actions
+action:
+- choose:
+# EVENT MODE
+  - conditions:
+    - condition: trigger
+      id:
+      - press-single-z2m-ts004f
+    sequence: !input event_button_short_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-double-z2m-ts004f
+    sequence: !input event_button_double_press
+  - conditions:
+    - condition: trigger
+      id:
+      - press-hold-z2m-ts004f
+    sequence: !input event_button_long_press
+  - conditions:
+    - condition: trigger
+      id:
+      - rotate-right-z2m-ts004f
+    sequence: !input event_button_rotate_right
+  - conditions:
+    - condition: trigger
+      id:
+      - rotate-left-z2m-ts004f
+    sequence: !input event_button_rotate_left
+# COMMAND MODE
+  - conditions:
+    - condition: trigger
+      id:
+      - toggle-z2m-ts004f
+    sequence: !input command_button_short_press
+  - conditions:
+    - condition: trigger
+      id:
+      - hue-move-z2m-ts004f
+    sequence: !input command_button_long_press
+  - conditions:
+    - condition: trigger
+      id:
+      - brightness-step-up-z2m-ts004f
+    sequence: !input command_button_rotate_right
+  - conditions:
+    - condition: trigger
+      id:
+      - brightness-step-down-z2m-ts004f
+    sequence: !input command_button_rotate_left
+  - conditions:
+    - condition: trigger
+      id:
+      - ct-step-up-z2m-ts004f
+    sequence: !input command_button_rotate_press_right
+  - conditions:
+    - condition: trigger
+      id:
+      - ct-step-down-z2m-ts004f
+    sequence: !input command_button_rotate_press_left

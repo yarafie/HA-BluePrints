@@ -1,0 +1,416 @@
+# ==========================================================
+# -------------------------------------------
+# RODRET wireless dimmer/power switch (E2201)
+# TRADFRI on/off switch (E1743)
+# -------------------------------------------
+# Action (enum)
+# The possible values are: 
+#  1. on
+#  2. off
+#  3. brightness_move_up
+#  4. brightness_move_down
+#  5. brightness_stop
+# -------------------------------------------
+# SOMRIG shortcut button (E2213)
+# -------------------------------------------
+# Action (enum)
+# The possible values are: 
+#  1. 1_initial_press
+#  2. 1_long_press
+#  3. 1_short_release
+#  4. 1_long_release
+#  5. 1_double_press
+#  6. 2_initial_press
+#  7. 2_long_press
+#  8. 2_short_release
+#  9. 2_long_release
+# 10. 2_double_press
+# ==========================================================
+#
+blueprint:
+  homeassistant:
+    min_version: 2024.10.0
+  author: damru
+  domain: automation
+  name: z2m - IKEA Rodret (E2201) Tradfri on/off (E1743) or Somrig (E2213) Controls
+  source_url: https://github.com/yarafie/HA-blueprints/blob/main/z2m-IKEA-rodret_E2201-tradfri_E1743-somrig_E2213-control_anything.yaml
+  description: "## Control anything with **IKEA RODRET** **IKEA TRADRI ON/OFF or **IKEA SOMRIG** remotes\n\n
+    **Only for Zigbee2MQTT**\n\n
+
+    Available controls:\n
+    - Single press **on/off** (Rodret/Tradfri on/off) **1 dot/2 dots** (Somrig) \n
+    - Double press **on/off** (Rodret/Tradfri on/off, (_Optional_)  **1 dot/2 dots** (Somrig)\n
+    - Hold **on/off** (Rodret/Tradri on/off) **1 dot/2 dots** (Somrig).\n
+      Actions will be executed every\n
+      **Helper Hold delay**,\n
+      but maximum\n
+      **Helper - Max number of loops** times.\n"
+#
+# Define UI and default values  
+  input:
+    remote_device:
+      name: Remote
+      description: 'Select IKEA remote (Rodret, Tradfri on/off, Somrig)
+        '
+      default: []
+      selector:
+        device:
+          filter:
+          - integration: mqtt
+            manufacturer: IKEA
+            model: RODRET wireless dimmer/power switch (E2201)
+          - integration: mqtt
+            manufacturer: IKEA
+            model: TRADFRI on/off switch (E1743)
+          - integration: mqtt
+            manufacturer: IKEA
+            model: SOMRIG shortcut button (E2213)
+          multiple: false
+    on_press_action:
+      name: Single press action (on / 1 dot)
+      description: 'Choose action(s) to run when **on** (Rodret/Tradfri on/off) or **1 dot** (Somrig)
+        button is **pressed**.
+        '
+      default: []
+      selector:
+        action: {}
+    off_press_action:
+      name: Single press action (off / 2 dots)
+      description: 'Choose action(s) to run when **off** (Rodret/Tradfri on/off) or **2 dots** (Somrig)
+        button is **pressed**.
+        '
+      default: []
+      selector:
+        action: {}
+    on_hold_action:
+      name: Hold action (on / 1 dot)
+      description: 'Choose action(s) to run when **on** (Rodret/Tradfri on/off) or **1 dot** (Somrig)
+        button is **held**.
+        '
+      default: []
+      selector:
+        action: {}
+    off_hold_action:
+      name: Hold action (off / 2 dots)
+      description: 'Choose action(s) to run when **off** (Rodret/Tradri on/off) or **2 dots** (Somrig)
+        button is **held**.
+        '
+      default: []
+      selector:
+        action: {}
+    on_double_press_action:
+      name: Double press action (on / 1 dot)
+      description: 'Choose action(s) to run when the **on** (Rodret/Tradri on/off) or **1 dot**
+        (Somrig) button is **pressed twice**. (**_NB for Rodret only_**: **Double
+        press event (on)** must be exposed and **Helper - Double press delay** interval
+        is used as a timeout.)
+        '
+      default: []
+      selector:
+        action: {}
+    off_double_press_action:
+      name: Double press action (off / 2 dots)
+      description: 'Choose action(s) to run when the **off** (Rodret/Tradfri on/off) or **2 dots**
+        (Rodret) button is **pressed twice**.  (**_NB for Rodret/Tradfri on/off only_**: **Double
+        press event (off)** must be exposed and **Helper - Double press delay** interval
+        is used as a timeout.)
+        '
+      default: []
+      selector:
+        action: {}
+    helper_hold_delay:
+      name: Helper - Hold delay
+      description: Delay between the execution of the **Hold** action(s).
+      default: 250
+      selector:
+        number:
+          unit_of_measurement: milliseconds
+          min: 100.0
+          max: 5000.0
+          step: 10.0
+          mode: slider
+    helper_max_loops:
+      name: Helper - Max number of loops
+      description: Maximum number of loops when holding down a button.
+      default: 20
+      selector:
+        number:
+          min: 1.0
+          max: 1000.0
+          step: 1.0
+          mode: slider
+    on_double_press_exposed:
+      name: (Rodret/Tradfri on/off only) Double press event (on)
+      description: '**_(Rodret/Tradfri on/off only)_** Choose whether or not to expose the virtual
+        **double press** event for the **on** button.  Turn this on if you are providing
+        action(s) for the **Double press action (on / 1 dot)**.
+        '
+      default: false
+      selector:
+        boolean: {}
+    off_double_press_exposed:
+      name: (Rodret/Tradfri on/off only) Double press event (off)
+      description: '**_(Rodret/Tradfri on/off only)_** Choose whether or not to expose the virtual
+        **double press** event for the **off** button.  Turn this on if you are providing
+        an action for the **Double press action (off / 2 dots)**.
+        '
+      default: false
+      selector:
+        boolean: {}
+    helper_double_press_delay:
+      name: (Rodret/Tradfri on/off only) Helper - Double press delay
+      description: '**(Rodret/Tradfri on/off only)** Max delay between the first and the second button
+        press for the **Double press events**. Provide a value only if you are using
+        a double press action. Increase this value if you notice that the double press
+        action is not triggered properly.
+        '
+      default: 250
+      selector:
+        number:
+          unit_of_measurement: milliseconds
+          min: 100.0
+          max: 5000.0
+          step: 10.0
+          mode: slider
+#
+# Define mode for automatiom
+mode: single
+max_exceeded: silent
+#
+# Define Triggers for automation
+triggers:
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'on'
+  id: press-on-z2m-e2201
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'off'
+  id: press-off-z2m-e2201
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_move_up
+  id: hold-on-z2m-e2201
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_move_down
+  id: hold-off-z2m-e2201
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_stop
+  id: release-z2m-e2201
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 1_short_release
+  id: press-dots1-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 2_short_release
+  id: press-dots2-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 1_double_press
+  id: double-press-dots1-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 2_double_press
+  id: double-press-dots2-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 1_long_press
+  id: hold-dots1-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 2_long_press
+  id: hold-dots2-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 1_long_release
+  id: release-hold-dots1-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 2_long_release
+  id: release-hold-dots2-z2m-e2213
+#
+# Define actions
+actions:
+- variables:
+    on_double_press_exposed: !input on_double_press_exposed
+    off_double_press_exposed: !input off_double_press_exposed
+- choose:
+  - conditions:
+    - condition: trigger
+      id:
+      - press-on-z2m-e2201
+      - press-dots1-z2m-e2213
+    sequence:
+    - if:
+      - condition: template
+        value_template: '{{ on_double_press_exposed }}'
+      then:
+      - choose:
+        - conditions:
+          - condition: trigger
+            id:
+            - press-on-z2m-e2201
+          sequence:
+          - wait_for_trigger:
+            - trigger: device
+              domain: mqtt
+              device_id: !input remote_device
+              type: action
+              subtype: 'on'
+            timeout:
+              milliseconds: !input helper_double_press_delay
+            continue_on_timeout: true
+          - if:
+            - condition: template
+              value_template: '{{ wait.trigger.idx is defined }}'
+            then: !input on_double_press_action
+            else: !input on_press_action
+        default: !input on_press_action
+      else: !input on_press_action
+  - conditions:
+    - condition: trigger
+      id:
+      - press-off-z2m-e2201
+      - press-dots2-z2m-e2213
+    sequence:
+    - if:
+      - condition: template
+        value_template: '{{ off_double_press_exposed }}'
+      then:
+      - choose:
+        - conditions:
+          - condition: trigger
+            id:
+            - press-off-z2m-e2201
+          sequence:
+          - wait_for_trigger:
+            - trigger: device
+              domain: mqtt
+              device_id: !input remote_device
+              type: action
+              subtype: 'off'
+            timeout:
+              milliseconds: !input helper_double_press_delay
+            continue_on_timeout: true
+          - if:
+            - condition: template
+              value_template: '{{ wait.trigger.idx is defined }}'
+            then: !input off_double_press_action
+            else: !input off_press_action
+        default: !input off_press_action
+      else: !input off_press_action
+  - conditions:
+    - condition: trigger
+      id:
+      - double-press-dots1-z2m-e2213
+    sequence: !input on_double_press_action
+  - conditions:
+    - condition: trigger
+      id:
+      - double-press-dots2-z2m-e2213
+    sequence: !input off_double_press_action
+  - conditions:
+    - condition: trigger
+      id:
+      - hold-on-z2m-e2201
+      - hold-dots1-z2m-e2213
+    sequence:
+    - repeat:
+        count: !input helper_max_loops
+        sequence:
+        - parallel:
+          - sequence: !input on_hold_action
+          - sequence:
+            - choose:
+              - conditions:
+                - condition: trigger
+                  id:
+                  - hold-on-z2m-e2201
+                  - hold-dots1-z2m-e2213
+                sequence:
+                - wait_for_trigger:
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input remote_device
+                    type: action
+                    subtype: brightness_stop
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input remote_device
+                    type: action
+                    subtype: 1_long_release
+                  timeout:
+                    milliseconds: !input helper_hold_delay
+                  continue_on_timeout: true
+                - if:
+                  - condition: template
+                    value_template: '{{ wait.trigger.idx is defined }}'
+                  then:
+                  - stop: button released
+  - conditions:
+    - condition: trigger
+      id:
+      - hold-off-z2m-e2201
+      - hold-dots2-z2m-e2213
+    sequence:
+    - repeat:
+        count: !input helper_max_loops
+        sequence:
+        - parallel:
+          - sequence: !input off_hold_action
+          - sequence:
+            - choose:
+              - conditions:
+                - condition: trigger
+                  id:
+                  - hold-off-z2m-e2201
+                  - hold-dots2-z2m-e2213
+                sequence:
+                - wait_for_trigger:
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input remote_device
+                    type: action
+                    subtype: brightness_stop
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input remote_device
+                    type: action
+                    subtype: 2_long_release
+                  timeout:
+                    milliseconds: !input helper_hold_delay
+                  continue_on_timeout: true
+                - if:
+                  - condition: template
+                    value_template: '{{ wait.trigger.idx is defined }}'
+                  then:
+                  - stop: button released

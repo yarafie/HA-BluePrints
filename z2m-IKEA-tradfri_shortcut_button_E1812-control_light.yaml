@@ -1,0 +1,174 @@
+# ==========================================================
+# ------------------------------
+# TRADFRI shortcut button (E1812)
+# ------------------------------
+# Action (enum)
+# The possible values are:
+# 1. on (is published when single-clicking the button)
+# 2. off (is published when double-clicking the button)
+# 3. brightness_move_up (is published when long-press the button)
+# 4. brightness_stop (is published when releasing ling-press the button)
+# ----------------------------------------------------------
+# simulated_brightness: Simulate a brightness value.
+# If this device provides a
+# brightness_move_up or brightness_move_down action
+# it is possible to specify the update interval and delta.
+# The action_brightness_delta indicates the delta for each
+# interval.
+# Example:
+# simulated_brightness:
+#  delta: 20 # delta per interval, default = 20
+#  interval: 200 # interval in milliseconds, default = 200
+# ==========================================================
+blueprint:
+  homeassistant:
+    min_version: 2024.10.0
+  author: yarafie
+  domain: automation
+  name: z2m - IKEA TRADFRI shortcut button (E1812) Light control
+  source_url: https://github.com/yarafie/HA-blueprints/blob/main/z2m-IKEA-tradfri_shortcut_button_E1812-control_light.yaml
+  description: "## Control a light with **IKEA TRADFRI shortcut button (E1812)** remotes\n\n
+
+    Only for use with Zigbee2MQTT\n\n
+
+    Available controls:\n
+
+    - Press once **on** to turn on the light\n
+     (Optional: set the target brightness by enabling
+                **Helper - Force Brightness**
+                and setting a
+                **Helper - Brightness** value)\n
+
+    - Press Twice **off** to turn off the light\n
+
+    - Hold hold down button to increase the brightness"
+#
+# Define UI and default values
+  input:
+    remote_device:
+      name: Remote
+      description: 'Select IKEA TRADFRI shortcut button (E1812)
+        '
+      default: ''
+      selector:
+        device:
+          filter:
+          - integration: mqtt
+            manufacturer: IKEA
+            model: TRADFRI shortcut button (E1812)
+          multiple: false
+    light:
+      name: Light
+      description: Light to control
+      selector:
+        entity:
+          filter:
+          - domain:
+            - light
+          multiple: false
+    helper_force_brightness:
+      name: Helper - Force brightness
+      description: 'Force the brightness to **Helper - Brightness** value when light
+        turns on.
+        '
+      default: false
+      selector:
+        boolean: {}
+    helper_brightness:
+      name: Helper - Brightness
+      description: 'Target light brightness when turning on.
+        Requires **Helper - Force brightness** to be enabled.
+        '
+      default: 50
+      selector:
+        number:
+          unit_of_measurement: '%'
+          min: 1.0
+          max: 100.0
+          step: 1.0
+          mode: slider
+#
+# Define mode for automatiom
+mode: restart
+max_exceeded: silent
+#
+# Define Triggers for automation
+triggers:
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'on'
+  id: press-on-z2m-e1812
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'off'
+  id: press-off-z2m-e1812
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_move_up
+  id: hold-on-z2m-e1812
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_stop
+  id: release-z2m-e1812
+#
+# Define actions
+actions:
+- variables:
+    helper_force_brightness: !input helper_force_brightness
+    helper_hold_delay: 0.1
+    helper_hold_dim_step: 5
+    light: !input light
+- choose:
+  - conditions:
+    - condition: trigger
+      id:
+      - press-on-z2m-e1812
+    sequence:
+    - choose:
+      - conditions: '{{ helper_force_brightness }}'
+        sequence:
+        - action: light.turn_on
+          target:
+            entity_id: !input light
+          data:
+            brightness_pct: !input helper_brightness
+      default:
+      - action: light.turn_on
+        target:
+          entity_id: !input light
+        data: {}
+  - conditions:
+    - condition: trigger
+      id:
+      - press-off-z2m-e1812
+    sequence:
+    - action: light.turn_off
+      target:
+        entity_id: !input light
+      data: {}
+  - conditions:
+    - condition: trigger
+      id:
+      - hold-on-z2m-e1812
+    sequence:
+    - repeat:
+        while:
+        - condition: trigger
+          id:
+          - hold-on-z2m-e1812
+        sequence:
+        - parallel:
+          - action: light.turn_on
+            target:
+              entity_id: !input light
+            data:
+              brightness_step_pct: '{{ helper_hold_dim_step }}'
+          - delay: '{{ helper_hold_delay }}'

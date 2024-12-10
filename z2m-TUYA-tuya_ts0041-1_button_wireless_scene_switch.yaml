@@ -1,0 +1,99 @@
+# ==========================================================
+# -------------------------------------------
+# Tuya Wireless switch with 1 button (TS0041)
+# -------------------------------------------
+# Action (enum)
+# The possible values are: 
+#  1. single 
+#  2. double
+#  3. hold
+# ----------------------------------------------------------
+# ==========================================================
+blueprint:
+  homeassistant:
+    min_version: 2024.10.0
+  author: yarafie
+  domain: automation
+  name: z2m - Tuya Wireless switch with 1 button (TS0041)
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/z2m-TUYA-tuya_ts0041-1_button_wireless_scene_switch.yaml
+  description: Automate your Tuya Wireless switch with 1 button (TS0041) via Zigbee2MQTT.
+#
+# Define UI and default values
+  input:
+    remote_device:
+      name: Remote
+      description: 'Select Tuya Wireless switch with 1 button (TS0041)
+        '
+      default: []
+      selector:
+        device:
+          filter:
+          - integration: mqtt
+            manufacturer: Tuya
+            model: Wireless switch with 1 button (TS0041)
+          multiple: false
+    button_one_short_press:
+      name: Single Press - Button 1
+      description: Action to run on button 1 single press
+      default: []
+      selector:
+        action: {}
+    button_one_double_press:
+      name: Double Press - Button 1
+      description: Action to run on button 1 double press
+      default: []
+      selector:
+        action: {}
+    button_one_long_press:
+      name: Long Press - Button 1
+      description: Action to run on button 1  long press
+      default: []
+      selector:
+        action: {}
+#
+# Define mode for automatiom
+mode: single
+max_exceeded: silent
+#
+# Define Triggers for automation
+triggers:
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'single'
+  id: press-single-z2m-ts0041
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'double'
+  id: press-double-z2m-ts0041
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'hold'
+  id: press-hold-z2m-ts0041
+#
+# Define actions
+actions:
+- choose:
+  - conditions:
+#    - '{{ command == ''single'' }}'
+    - condition: trigger
+      id:
+      - press-single-z2m-ts0041
+    sequence: !input button_one_short_press
+  - conditions:
+#    - '{{ command == ''double'' }}'
+    - condition: trigger
+      id:
+      - press-double-z2m-ts0041
+    sequence: !input button_one_double_press
+  - conditions:
+#    - '{{ command == ''hold'' }}'
+    - condition: trigger
+      id:
+      - press-hold-z2m-ts0041
+    sequence: !input button_one_long_press

@@ -71,7 +71,7 @@ blueprint:
   input:
     remote_device:
       name: Remote
-      description: 'Selec Smart Knob to use'
+      description: 'Select Smart Knob to use'
       default: []
       selector:
         device:

@@ -144,7 +144,7 @@ triggers:
   device_id: !input remote_device
   type: action
   subtype: '1_hold'
-  id: press-1-hold-z2m-ts0041
+  id: press-1-hold-z2m-ts0044
 # Button2
 - trigger: device
   domain: mqtt
@@ -163,7 +163,7 @@ triggers:
   device_id: !input remote_device
   type: action
   subtype: '2_hold'
-  id: press-2-hold-z2m-ts0041
+  id: press-2-hold-z2m-ts0044
 # Button3
 - trigger: device
   domain: mqtt
@@ -182,7 +182,7 @@ triggers:
   device_id: !input remote_device
   type: action
   subtype: '3_hold'
-  id: press-3-hold-z2m-ts0041
+  id: press-3-hold-z2m-ts0044
 # Button4
 - trigger: device
   domain: mqtt
@@ -201,7 +201,7 @@ triggers:
   device_id: !input remote_device
   type: action
   subtype: '4_hold'
-  id: press-4-hold-z2m-ts0041
+  id: press-4-hold-z2m-ts0044
 #
 # Define actions
 actions:

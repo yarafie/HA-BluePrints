@@ -121,7 +121,7 @@ blueprint:
         action: {}
 #
 # Define mode for automatiom
-mode: parallel
+mode: restart
 max_exceeded: silent
 #
 # Define Triggers for automation

@@ -41,7 +41,7 @@
 # ==========================================================
 blueprint:
   homeassistant:
-     min_version: 2024.10.0
+    min_version: 2024.10.0
   author: yarafie
   domain: automation
   name: z2m - IKEA STYRBAR remote control (E2001/E2002)

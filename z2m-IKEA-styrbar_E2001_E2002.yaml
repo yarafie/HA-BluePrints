@@ -140,13 +140,13 @@ triggers:
   domain: mqtt
   device_id: !input remote_device
   type: action
-  subtype: on
+  subtype: "on"
   id: press-top-z2m-e2001
 - trigger: device
   domain: mqtt
   device_id: !input remote_device
   type: action
-  subtype: off
+  subtype: "off"
   id: press-bottom-z2m-e2001
 - trigger: device
   domain: mqtt

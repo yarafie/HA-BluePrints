@@ -1,0 +1,190 @@
+blueprint:
+  name: z2m - Moes ZT-SR-EU4 Star Ring 4 Gang Scene Switch via Zigbee2MQTT device trigger
+  description: Automate your Star Ring 4 Gang Scene Switch via Zigbee2MQTT.
+  domain: automation
+  input:
+    device:
+      name: Switch
+      description: Moes ZT-SR-EU4 Star Ring 4 Gang Scene Switch to use
+      selector:
+        device:
+          filter:
+            - manufacturer: Moes
+              model: Star Ring 4 Gang Scene Switch
+            - manufacturer: Moes
+              model: Star Ring 4 Gang Scene Switch (ZT-SR-EU4)
+          multiple: false
+    button_one_short_press:
+      name: Single Press - Button 1
+      description: Action to run on button 1 (upper-left) single press
+      default: []
+      selector:
+        action: {}
+    button_one_double_press:
+      name: Double Press - Button 1
+      description: Action to run on button 1 (upper-left) double press
+      default: []
+      selector:
+        action: {}
+    button_one_long_press:
+      name: Long Press - Button 1
+      description: Action to run on button 1 (upper-left) long press
+      default: []
+      selector:
+        action: {}
+    button_two_short_press:
+      name: Single Press - Button 2
+      description: Action to run on button 2 (upper-right) single press
+      default: []
+      selector:
+        action: {}
+    button_two_double_press:
+      name: Double Press - Button 2
+      description: Action to run on button 2 (upper-right) double press
+      default: []
+      selector:
+        action: {}
+    button_two_long_press:
+      name: Long Press - Button 2
+      description: Action to run on button 2 (upper-right) long press
+      default: []
+      selector:
+        action: {}
+    button_three_short_press:
+      name: Single Press - Button 3
+      description: Action to run on button 3 (lower-left) single press
+      default: []
+      selector:
+        action: {}
+    button_three_double_press:
+      name: Double Press - Button 3
+      description: Action to run on button 3 (upper-right) double press
+      default: []
+      selector:
+        action: {}
+    button_three_long_press:
+      name: Long Press - Button 3
+      description: Action to run on button 3 (lower-left) long press
+      default: []
+      selector:
+        action: {}
+    button_four_short_press:
+      name: Single Press - Button 4
+      description: Action to run on button 4 (lower-right) single press
+      default: []
+      selector:
+        action: {}
+    button_four_double_press:
+      name: Double Press - Button 4
+      description: Action to run on button 4 (lower-right) double press
+      default: []
+      selector:
+        action: {}
+    button_four_long_press:
+      name: Long Press - Button 4
+      description: Action to run on button 4 (lower-right) long press
+      default: []
+      selector:
+        action: {}
+  source_url: https://community.home-assistant.io/t/moes-zt-sr-eu4-star-ring-4-gang-scene-switch-via-zigbee2mqtt-device-trigger/808142
+mode: queued
+max_exceeded: silent
+trigger:
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 1_single
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 1_double
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 1_hold
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 2_single
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 2_double
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 2_hold
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 3_single
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 3_double
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 3_hold
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 4_single
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 4_double
+  - platform: device
+    domain: mqtt
+    device_id: !input device
+    type: action
+    subtype: 4_hold
+action:
+- choose:
+  - conditions:
+    - "{{ trigger.payload == '1_single' }}"
+    sequence: !input "button_one_short_press"
+  - conditions:
+    - "{{ trigger.payload == '2_single' }}"
+    sequence: !input "button_two_short_press"
+  - conditions:
+    - "{{ trigger.payload == '3_single' }}"
+    sequence: !input "button_three_short_press"
+  - conditions:
+    - "{{ trigger.payload == '4_single' }}"
+    sequence: !input "button_four_short_press"
+  - conditions:
+    - "{{ trigger.payload == '1_double' }}"
+    sequence: !input "button_one_double_press"
+  - conditions:
+    - "{{ trigger.payload == '2_double' }}"
+    sequence: !input "button_two_double_press"
+  - conditions:
+    - "{{ trigger.payload == '3_double' }}"
+    sequence: !input "button_three_double_press"
+  - conditions:
+    - "{{ trigger.payload == '4_double' }}"
+    sequence: !input "button_four_double_press"
+  - conditions:
+    - "{{ trigger.payload == '1_hold' }}"
+    sequence: !input "button_one_long_press"
+  - conditions:
+    - "{{ trigger.payload == '2_hold' }}"
+    sequence: !input "button_two_long_press"
+  - conditions:
+    - "{{ trigger.payload == '3_hold' }}"
+    sequence: !input "button_three_long_press"
+  - conditions:
+    - "{{ trigger.payload == '4_hold' }}"
+    sequence: !input "button_four_long_press"

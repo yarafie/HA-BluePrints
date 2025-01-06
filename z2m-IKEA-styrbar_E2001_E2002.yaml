@@ -60,6 +60,9 @@ blueprint:
           filter:
           - integration: mqtt
             manufacturer: IKEA
+            model: STYRBAR remote control
+          - integration: mqtt
+            manufacturer: IKEA
             model: STYRBAR remote control (E2001/E2002)
           multiple: false
     button_on:

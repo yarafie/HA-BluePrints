@@ -30,6 +30,9 @@ blueprint:
           filter:
           - integration: mqtt
             manufacturer: Tuya
+            model: Wireless switch with 1 button
+          - integration: mqtt
+            manufacturer: Tuya
             model: Wireless switch with 1 button (TS0041)
           multiple: false
     button_one_short_press:

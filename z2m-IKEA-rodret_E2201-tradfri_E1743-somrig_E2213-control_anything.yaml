@@ -58,6 +58,15 @@ blueprint:
           filter:
           - integration: mqtt
             manufacturer: IKEA
+            model: RODRET wireless dimmer/power switch
+          - integration: mqtt
+            manufacturer: IKEA
+            model: TRADFRI on/off switch
+          - integration: mqtt
+            manufacturer: IKEA
+            model: SOMRIG shortcut button
+          - integration: mqtt
+            manufacturer: IKEA
             model: RODRET wireless dimmer/power switch (E2201)
           - integration: mqtt
             manufacturer: IKEA

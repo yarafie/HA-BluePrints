@@ -40,6 +40,12 @@ blueprint:
           filter:
             - integration: mqtt
               manufacturer: Moes
+              model: Star Ring 4 Gang Scene Switch
+            - integration: mqtt
+              manufacturer: Tuya
+              model: Wireless switch with 4 buttons
+            - integration: mqtt
+              manufacturer: Moes
               model: Star Ring 4 Gang Scene Switch (ZT-SR-EU4)
             - integration: mqtt
               manufacturer: Tuya

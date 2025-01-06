@@ -55,6 +55,9 @@ blueprint:
           filter:
           - integration: mqtt
             manufacturer: IKEA
+            model: TRADFRI shortcut button
+          - integration: mqtt
+            manufacturer: IKEA
             model: TRADFRI shortcut button (E1812)
           multiple: false
     light:

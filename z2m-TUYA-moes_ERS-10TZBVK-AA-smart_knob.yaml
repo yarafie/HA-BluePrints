@@ -78,6 +78,9 @@ blueprint:
           filter:
           - integration: mqtt
             manufacturer: Tuya
+            model: Smart knob
+          - integration: mqtt
+            manufacturer: Tuya
             model: Smart knob (ERS-10TZBVK-AA)
           multiple: false
 # EVENT MODE

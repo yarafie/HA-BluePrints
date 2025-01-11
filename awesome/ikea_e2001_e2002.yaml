@@ -40,16 +40,16 @@ blueprint:
       # **YAR** - ADD START - Selector for devices to choose from
       selector:
         device:
-          # **YAR** - source: https://www.zigbee2mqtt.io/devices/E2001_E2002.html#ikea-e2001-e2002
+          # source: https://www.zigbee2mqtt.io/devices/E2001_E2002.html#ikea-e2001-e2002
           filter:
           - integration: mqtt
             manufacturer: IKEA
             model: STYRBAR remote control
-          # **For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+          # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
           - integration: mqtt
             manufacturer: IKEA
             model: STYRBAR remote control (E2001/E2002)
-          # **YAR** - source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
+          # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
           - integration: zha
             manufacturer: IKEA of Sweden
             model: Remote Control N2
@@ -346,7 +346,7 @@ variables:
       button_down_long: [move_1_83, move_MoveMode.Down_83_0_0]
       # Kept first parameter for potential backwards compatibility of previous firmware versions
       button_down_release: [stop, stop_with_on_off]
-    # **YAR** - source: https://www.zigbee2mqtt.io/devices/E2001_E2002.html#ikea-e2001-e2002
+    # source: https://www.zigbee2mqtt.io/devices/E2001_E2002.html#ikea-e2001-e2002
     zigbee2mqtt:
       button_left_short: [arrow_left_click]
       button_left_long: [arrow_left_hold]

@@ -40,16 +40,16 @@ blueprint:
       # **YAR** - ADD START - Selector for devices to choose from
       selector:
         device:
-          # **YAR** - source https://www.zigbee2mqtt.io/devices/E1524_E1810.html#ikea-e1524-e1810
+          # source: https://www.zigbee2mqtt.io/devices/E1524_E1810.html#ikea-e1524-e1810
           filter:
           - integration: mqtt
             manufacturer: IKEA
             model: TRADFRI remote control
-          # **For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+          # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
           - integration: mqtt
             manufacturer: IKEA
             model: TRADFRI remote control (E1524/E1810)
-          # **YAR** - source https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
+          # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
           - integration: zha
             manufacturer: IKEA of Sweden
             model: TRADFRI remote control
@@ -373,7 +373,7 @@ variables:
       button_down_release: [stop]
       button_center_short: [toggle]
       button_center_long: [press_2_0_0]
-    # **YAR** - source https://www.zigbee2mqtt.io/devices/E1524_E1810.html#ikea-e1524-e1810
+    # source: https://www.zigbee2mqtt.io/devices/E1524_E1810.html#ikea-e1524-e1810
     zigbee2mqtt:
       button_left_short: [arrow_left_click]
       button_left_long: [arrow_left_hold]

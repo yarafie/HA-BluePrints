@@ -1,23 +1,22 @@
 # Blueprint metadata
 blueprint:
-  name: Controller - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer
+  name: Controller - IKEA E1766 TRÅDFRI Open/Close Remote
   description: |
-    # Controller - IKEA E1743 TRÅDFRI On/Off Switch & Dimmer
+    # Controller - IKEA E1766 TRÅDFRI Open/Close Remote
 
-    Controller automation for executing any kind of action triggered by the provided IKEA E1743 TRÅDFRI On/Off Switch & Dimmer. Allows to optionally loop an action on a button long press.
+    Controller automation for executing any kind of action triggered by the provided IKEA E1766 TRÅDFRI Open/Close Remote.
     Supports deCONZ, ZHA, Zigbee2MQTT.
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with media players, lights, covers and more.
-    See the list of [Hooks available for this controller](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e1743#available-hooks) for additional details.
+    See the list of [Hooks available for this controller](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e1766#available-hooks) for additional details.
 
-    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e1743).
+    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/ikea_e1766).
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**.
 
-    ℹ️ Version 2025.01.02
-    ℹ️ Version 2025.01.07 - Added support for zigbee2mqtt mqtt device triggers - [yarafie]
-  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/controllers/ikea_e1743/ikea_e1743.yaml
+    ℹ️ Version 2025.01.12
+  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/controllers/ikea_e1766/ikea_e1766.yaml
   domain: automation
   homeassistant:
     min_version: 2023.5.0
@@ -32,35 +31,33 @@ blueprint:
             - ZHA
             - Zigbee2MQTT
     controller_device:
-      # **YAR** - ADD START - To Support zigbee2mqtt mqtt device triggers when legacy=false
       name: (deCONZ, ZHA, Zigbee2MQTT) Controller Device
-      # **YAR** - ADD END -
       description: The controller device to use for the automation. Choose a value only if the remote is integrated with deCONZ, ZHA, Zigbee2MQTT.
       default: ''
-      # **YAR** - ADD START - Selector for devices to choose from
       selector:
         device:
           filter:
-          # source: https://www.zigbee2mqtt.io/devices/E1743.html#ikea-e1743
-          - integration: mqtt
-            manufacturer: IKEA
-            model: TRADFRI on/off switch
-          # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
-          - integration: mqtt
-            manufacturer: IKEA
-            model: TRADFRI on/off switch (E1743)
-          # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
-          - integration: zha
-            manufacturer: IKEA of Sweden
-            model: TRADFRI on/off switch
-          - integration: deconz
-            manufacturer: IKEA of Sweden
-            model: TRADFRI on/off switch
-          multiple: false
-      # **YAR** - ADD END -
+            # source: https://www.zigbee2mqtt.io/devices/E1766.html#ikea-e1766
+            - integration: mqtt
+              manufacturer: IKEA
+              model: TRADFRI open/close remote
+            # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+            - integration: mqtt
+              manufacturer: IKEA
+              model: TRADFRI open/close remote (E1766)
+            # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
+            - integration: zha
+              manufacturer: IKEA of Sweden
+              model: TRADFRI open/close remote
+            - integration: deconz
+              manufacturer: IKEA of Sweden
+              model: TRADFRI open/close remote
+            multiple: false
     controller_entity:
-      name: (Zigbee2MQTT) Controller Entity
-      description: The action sensor of the controller to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT.
+      name: (Optional)(Deprecated) Controller Entity
+      description: >-
+        The action sensor of the controller to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT and Legacy Action Sensors are enabled.
+        This input is deprecated in favor of the Controller Device input, and will be removed in a future release.
       default: ''
       selector:
         entity:
@@ -76,12 +73,6 @@ blueprint:
     action_button_up_short:
       name: (Optional) Up button short press
       description: Action to run on short up button press.
-      default: []
-      selector:
-        action:
-    action_button_up_long:
-      name: (Optional) Up button long press
-      description: Action to run on long up button press.
       default: []
       selector:
         action:
@@ -103,12 +94,6 @@ blueprint:
       default: []
       selector:
         action:
-    action_button_down_long:
-      name: (Optional) Down button long press
-      description: Action to run on long down button press.
-      default: []
-      selector:
-        action:
     action_button_down_release:
       name: (Optional) Down button release
       description: Action to run on down button release after long press.
@@ -121,43 +106,6 @@ blueprint:
       default: []
       selector:
         action:
-    # inputs for looping custom actions on long button press events until the corresponding release event is received
-    button_up_long_loop:
-      name: (Optional) Up button long press - loop until release
-      description: Loop the up button action until the button is released.
-      default: false
-      selector:
-        boolean:
-    button_up_long_max_loop_repeats:
-      name: (Optional) Up button long press - Maximum loop repeats
-      description: >-
-        Maximum number of repeats for the custom action, when looping is enabled.
-        Use it as a safety limit to prevent an endless loop in case the corresponding stop event is not received.
-      default: 500
-      selector:
-        number:
-          min: 1
-          max: 5000
-          mode: slider
-          step: 1
-    button_down_long_loop:
-      name: (Optional) Down button long press - loop until release
-      description: Loop the down button action until the button is released.
-      default: false
-      selector:
-        boolean:
-    button_down_long_max_loop_repeats:
-      name: (Optional) Down button long press - Maximum loop repeats
-      description: >-
-        Maximum number of repeats for the custom action, when looping is enabled.
-        Use it as a safety limit to prevent an endless loop in case the corresponding stop event is not received.
-      default: 500
-      selector:
-        number:
-          min: 1
-          max: 5000
-          mode: slider
-          step: 1
     # inputs for enabling double press events
     button_up_double_press:
       name: (Optional) Expose up button double press event
@@ -200,11 +148,7 @@ blueprint:
 variables:
   # convert input tags to variables, to be used in templates
   integration: !input integration
-  button_up_long_loop: !input button_up_long_loop
-  button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
   button_up_double_press: !input button_up_double_press
-  button_down_long_loop: !input button_down_long_loop
-  button_down_long_max_loop_repeats: !input button_down_long_max_loop_repeats
   button_down_double_press: !input button_down_double_press
   helper_last_controller_event: !input helper_last_controller_event
   helper_double_press_delay: !input helper_double_press_delay
@@ -218,45 +162,34 @@ variables:
   actions_mapping:
     deconz:
       button_up_short: ['1002']
-      button_up_long: ['1001']
       button_up_release: ['1003']
       button_down_short: ['2002']
-      button_down_long: ['2001']
       button_down_release: ['2003']
     zha:
-      button_up_short: ['on']
-      button_up_long: [move_with_on_off_0_83]
+      button_up_short: [up_open]
       button_up_release: [stop]
-      button_down_short: ['off']
-      button_down_long: [move_1_83]
+      button_down_short: [down_close]
       button_down_release: [stop]
-    # source: https://www.zigbee2mqtt.io/devices/E1743.html#ikea-e1743
     zigbee2mqtt:
-      button_up_short: ['on']
-      button_up_long: [brightness_move_up]
-      button_up_release: [brightness_stop]
-      button_down_short: ['off']
-      button_down_long: [brightness_move_down]
-      button_down_release: [brightness_stop]
+      # source: https://www.zigbee2mqtt.io/devices/E1766.html#ikea-e1766
+      button_up_short: [open]
+      button_up_release: [stop]
+      button_down_short: [close]
+      button_down_release: [stop]
   # pre-choose actions for buttons based on configured integration
   # no need to perform this task at automation runtime
   button_up_short: '{{ actions_mapping[integration_id]["button_up_short"] }}'
-  button_up_long: '{{ actions_mapping[integration_id]["button_up_long"] }}'
   button_up_release: '{{ actions_mapping[integration_id]["button_up_release"] }}'
   button_down_short: '{{ actions_mapping[integration_id]["button_down_short"] }}'
-  button_down_long: '{{ actions_mapping[integration_id]["button_down_long"] }}'
   button_down_release: '{{ actions_mapping[integration_id]["button_down_release"] }}'
   # integrations which need to store the previous press event to determine which button was released
   integrations_with_prev_event_storage: [zha, zigbee2mqtt]
   # build data to send within a controller event
   controller_entity: !input controller_entity
   controller_device: !input controller_device
-  # **YAR** - ADD START - Logic to handle z2m legacy
-  # **YAR** If user provided input for controller_entity assume legacy **Maybe There Is A Better Way To Do This**
-  # **YAR** setting z2m_legacy to true with below code and set controller_id accordingly
+  # if integration is zigbee2mqtt and input for controller_entity is set, assume legacy mode
   z2m_legacy: '{{ integration_id == "zigbee2mqtt" and controller_entity not in ["", None, undefined] }}'
   controller_id: '{% if z2m_legacy %}{{controller_entity}}{% else %}{{controller_device}}{% endif %}'
-  # **YAR** - ADD END -
 mode: restart
 max_exceeded: silent
 trigger:
@@ -265,34 +198,27 @@ trigger:
     event_type: state_changed
     event_data:
       entity_id: !input controller_entity
-  # **YAR** - ADD START - zigbee2mqtt mqtt device action triggers
   # triggers for zigbee2mqtt mqtt device action
   - platform: device
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: 'on'
+    subtype: open
   - platform: device
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: 'off'
+    subtype: stop
   - platform: device
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: brightness_move_up
+    subtype: close
   - platform: device
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: brightness_move_down
-  - platform: device
-    domain: mqtt
-    device_id: !input controller_device
-    type: action
-    subtype: brightness_stop
-  # **YAR** - ADD END -
+    subtype: stop
   # trigger for other integrations
   - platform: event
     event_type:
@@ -304,12 +230,11 @@ condition:
   - condition: and
     conditions:
       # check that the button event is not empty
-      # **YAR** - ADD START - zigbee2mqtt checks for device or entity
       - >-
         {%- set trigger_action -%}
-        {%- if integration_id == "zigbee2mqtt" and z2m_legacy == false -%}
+        {%- if integration_id == "zigbee2mqtt" and not z2m_legacy -%}
         {{ trigger.payload }}
-        {%- elif integration_id == "zigbee2mqtt" and z2m_legacy == true -%}
+        {%- elif integration_id == "zigbee2mqtt" and z2m_legacy -%}
         {{ trigger.event.data.new_state.state }}
         {%- elif integration_id == "deconz" -%}
         {{ trigger.event.data.event }}
@@ -321,7 +246,6 @@ condition:
       # only for zigbee2mqtt in legacy mode, check if the event is relative to a real state change, and not only some minor changes in the sensor attributes
       # this is required since multiple state_changed events are fired for a single button press, with the result of the automation being triggered multiple times
       - '{{ not (integration_id == "zigbee2mqtt" and z2m_legacy) or trigger.event.data.new_state.state != trigger.event.data.old_state.state }}'
-      # **YAR** - ADD END -
 action:
   # debouncing - when automation is triggered multiple times, the last automation run is the one which completes execution, due to mode restart
   # therefore previous runs must wait for the debounce delay before executing any other action
@@ -331,20 +255,18 @@ action:
   # extract button event from the trigger
   # provide a single string value to check against
   - variables:
-      # **YAR** - ADD START - zigbee2mqtt actions for device or entity
       trigger_action: >-
-        {%- if integration_id == "zigbee2mqtt" and z2m_legacy == false -%}
+        {%- if integration_id == "zigbee2mqtt" and not z2m_legacy -%}
         {{ trigger.payload }}
-        {%- elif integration_id == "zigbee2mqtt" and z2m_legacy == true -%}
+        {%- elif integration_id == "zigbee2mqtt" and z2m_legacy -%}
         {{ trigger.event.data.new_state.state }}
         {%- elif integration_id == "deconz" -%}
         {{ trigger.event.data.event }}
         {%- elif integration_id == "zha" -%}
         {{ trigger.event.data.command }}{{"_" if trigger.event.data.args|length > 0}}{{ trigger.event.data.args|join("_") }}
         {%- endif -%}
-      # **YAR** - ADD END -
       trigger_delta: '{{ (as_timestamp(now()) - ((states(helper_last_controller_event) | from_json).t if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{((\"a\":\".*\"|\"t\":\d+\.\d+)(,)?){2}\}$")) else as_timestamp("1970-01-01 00:00:00"))) * 1000 }}'
-      last_controller_event: '{{ (states(helper_last_controller_event) | from_json).a if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{((\"a\":\".*\"|\"t\":\d+\.\d+)(,)?){2}\}$")) else "" }}'
+      last_controller_event: '{{ (states(helper_last_controller_event) | from_json).a if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{((\"a\": \".*\"|\"t\": \d+\.\d+)(, )?){2}\}$")) else "" }}'
   # update helper
   - service: input_text.set_value
     data:
@@ -405,26 +327,10 @@ action:
               - choose:
                   - conditions: []
                     sequence: !input action_button_up_short
-      - conditions: '{{ trigger_action | string in button_up_long }}'
-        sequence:
-          # fire the event only once before looping the action
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_up_long
-          - choose:
-              # if looping is enabled, loop the action for a finite number of iterations
-              - conditions: '{{ button_up_long_loop }}'
-                sequence:
-                  - repeat:
-                      while: '{{ repeat.index < button_up_long_max_loop_repeats | int }}'
-                      sequence: !input action_button_up_long
-            # if looping is not enabled run the custom action only once
-            default: !input action_button_up_long
       - conditions:
           - '{{ trigger_action | string in button_up_release }}'
           # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
-          - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_up_long }}'
+          - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_up_short }}'
         sequence:
           # fire the event
           - event: ahb_controller_event
@@ -488,26 +394,10 @@ action:
               - choose:
                   - conditions: []
                     sequence: !input action_button_down_short
-      - conditions: '{{ trigger_action | string in button_down_long }}'
-        sequence:
-          # fire the event only once before looping the action
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_down_long
-          - choose:
-              # if looping is enabled, loop the action for a finite number of iterations
-              - conditions: '{{ button_down_long_loop }}'
-                sequence:
-                  - repeat:
-                      while: '{{ repeat.index < button_down_long_max_loop_repeats | int }}'
-                      sequence: !input action_button_down_long
-            # if looping is not enabled run the custom action only once
-            default: !input action_button_down_long
       - conditions:
           - '{{ trigger_action | string in button_down_release }}'
           # for integrations which need to store the last controller event, need to check the previous button event, stored in the provided input_text
-          - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_down_long }}'
+          - '{{ not integration_id in integrations_with_prev_event_storage or last_controller_event | string in button_down_short }}'
         sequence:
           # fire the event
           - event: ahb_controller_event

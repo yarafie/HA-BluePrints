@@ -1,24 +1,25 @@
 # Blueprint metadata
 blueprint:
-  name: Controller - Xiaomi WXKG11LM Aqara Wireless Switch Mini
+  name: Controller - Philips 8718699693985 Hue Smart Button
   description: |
-    # Controller - Xiaomi WXKG11LM Aqara Wireless Switch Mini
+    # Controller - Philips 8718699693985 Hue Smart Button
 
-    Controller automation for executing any kind of action triggered by the provided Xiaomi WXKG11LM Aqara Wireless Switch Mini. Allows to optionally loop an action on a button long press.
+    Controller automation for executing any kind of action triggered by the provided Philips 8718699693985 Hue Smart Button. Allows to optionally loop an action on a button long press.
     Supports deCONZ, ZHA, Zigbee2MQTT.
 
     Automations created with this blueprint can be connected with one or more [Hooks](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/hooks) supported by this controller.
     Hooks allow to easily create controller-based automations for interacting with media players, lights, covers and more.
-    See the list of [Hooks available for this controller](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/xiaomi_wxkg11lm#available-hooks) for additional details.
+    See the list of [Hooks available for this controller](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_8718699693985#available-hooks) for additional details.
 
-    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/xiaomi_wxkg11lm).
+    📕 Full documentation regarding this blueprint is available [here](https://epmatt.github.io/awesome-ha-blueprints/docs/blueprints/controllers/philips_8718699693985).
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**.
 
-    ℹ️ Version 2022.08.08
-    ℹ️ Version 2025.01.07 - Added support for zigbee2mqtt mqtt device triggers - [yarafie]
-  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/controllers/xiaomi_wxkg11lm/xiaomi_wxkg11lm.yaml
+    ℹ️ Version 2025.01.12
+  source_url: https://github.com/EPMatt/awesome-ha-blueprints/blob/main/blueprints/controllers/philips_8718699693985/philips_8718699693985.yaml
   domain: automation
+  homeassistant:
+    min_version: 2023.5.0
   input:
     integration:
       name: (Required) Integration
@@ -30,34 +31,33 @@ blueprint:
             - ZHA
             - Zigbee2MQTT
     controller_device:
-      # **YAR** - ADD START - To Support zigbee2mqtt mqtt device triggers when legacy=false
       name: (deCONZ, ZHA, Zigbee2MQTT) Controller Device
       description: The controller device to use for the automation. Choose a value only if the remote is integrated with deCONZ, ZHA, Zigbee2MQTT.
-      # **YAR** - ADD END -
       default: ''
       selector:
         device:
-          # source: https://www.zigbee2mqtt.io/devices/WXKG01LM.html#xiaomi-wxkg01lm
           filter:
-          - integration: mqtt
-            manufacturer: Xiaomi
-            model: Mi wireless switch
-          # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
-          - integration: mqtt
-            manufacturer: Xiaomi
-            model: Mi wireless switch (WXKG01LM)
-          # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
-          - integration: zha
-          # **YAR** - TBConfirmed manufacturer: Xiaomi
-          # **YAR** - TBConfirmed  model: Mi round smart wireless switch
-          - integration: deconz
-          # **YAR** - TBConfirmed manufacturer: Xiaomi
-          # **YAR** - TBConfirmed model: Mi round smart wireless switch
+            # source: https://www.zigbee2mqtt.io/devices/8718699693985.html#philips-8718699693985
+            - integration: mqtt
+              manufacturer: Philips
+              model: Hue smart button
+            # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+            - integration: mqtt
+              manufacturer: Philips
+              model: Hue smart button (8718699693985)
+            # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
+            - integration: zha
+              manufacturer: Philips
+            # **TBConfirmed** model: 
+            - integration: deconz
+              manufacturer: Philips
+            # **TBConfirmed** model: 
           multiple: false
-      # **YAR** - ADD END -
     controller_entity:
-      name: (Zigbee2MQTT) Controller Entity
-      description: The action sensor of the controller to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT.
+      name: (Optional)(Deprecated) Controller Entity
+      description: >-
+        The action sensor of the controller to use for the automation. Choose a value only if the remote is integrated with Zigbee2MQTT and Legacy Action Sensors are enabled.
+        This input is deprecated in favor of the Controller Device input, and will be removed in a future release.
       default: ''
       selector:
         entity:
@@ -113,7 +113,25 @@ blueprint:
           max: 5000
           mode: slider
           step: 1
+    # inputs for enabling double press events
+    button_double_press:
+      name: (Optional) Expose button double press event
+      description: Choose whether or not to expose the virtual double press event for the button. Turn this on if you are providing an action for the button double press event.
+      default: false
+      selector:
+        boolean:
     # helpers used to properly recognize the remote button events
+    helper_double_press_delay:
+      name: (Optional) Helper - Double Press delay
+      description: Max delay between the first and the second button press for the double press event. Provide a value only if you are using a double press action. Increase this value if you notice that the double press action is not triggered properly.
+      default: 500
+      selector:
+        number:
+          min: 100
+          max: 5000
+          unit_of_measurement: milliseconds
+          mode: box
+          step: 10
     helper_debounce_delay:
       name: (Optional) Helper - Debounce delay
       description:
@@ -133,42 +151,41 @@ variables:
   integration: !input integration
   button_long_loop: !input button_long_loop
   button_long_max_loop_repeats: !input button_long_max_loop_repeats
+  button_double_press: !input button_double_press
   helper_last_controller_event: !input helper_last_controller_event
+  helper_double_press_delay: !input helper_double_press_delay
   helper_debounce_delay: !input helper_debounce_delay
   # integration id used to select items in the action mapping
   integration_id: '{{ integration | lower }}'
+  # adjusted debounce delay so that the resulting double press delay is exactly as specified by the user when running the action, taking also account of debouncing
+  # make sure it never goes below the minimum double press delay
+  adjusted_double_press_delay: '{{ [helper_double_press_delay - helper_debounce_delay, 100] | max }}'
   # mapping between actions and integrations
   actions_mapping:
     deconz:
-      button_short: ['1002']
+      button_short: ['1000']
       button_long: ['1001']
       button_release: ['1003']
-      button_double: ['1004']
     zha:
-      button_short: [single_value]
-      button_long: [hold_value]
-      button_release: [release_value]
-      button_double: [double_value]
+      button_short: [on_short_release]
+      button_long: [on_hold]
+      button_release: [on_long_release]
     zigbee2mqtt:
-      button_short: [single]
+      # source: https://www.zigbee2mqtt.io/devices/8718699693985.html#action-enum
+      button_short: ['on', 'off', press]
       button_long: [hold]
       button_release: [release]
-      button_double: [double]
   # pre-choose actions for buttons based on configured integration
   # no need to perform this task at automation runtime
   button_short: '{{ actions_mapping[integration_id]["button_short"] }}'
   button_long: '{{ actions_mapping[integration_id]["button_long"] }}'
   button_release: '{{ actions_mapping[integration_id]["button_release"] }}'
-  button_double: '{{ actions_mapping[integration_id]["button_double"] }}'
   # build data to send within a controller event
   controller_entity: !input controller_entity
   controller_device: !input controller_device
-  # **YAR** - ADD START - Logic to handle z2m legacy
-  # **YAR** If user provided input for controller_entity assume legacy **Maybe There Is A Better Way To Do This**
-  # **YAR** setting z2m_legacy to true with below code and set controller_id accordingly
+  # if integration is zigbee2mqtt and input for controller_entity is set, assume legacy mode
   z2m_legacy: '{{ integration_id == "zigbee2mqtt" and controller_entity not in ["", None, undefined] }}'
   controller_id: '{% if z2m_legacy %}{{controller_entity}}{% else %}{{controller_device}}{% endif %}'
-  # **YAR** - ADD END -
 mode: restart
 max_exceeded: silent
 trigger:
@@ -177,13 +194,22 @@ trigger:
     event_type: state_changed
     event_data:
       entity_id: !input controller_entity
-  # **YAR** - ADD START - zigbee2mqtt mqtt device action triggers
   # triggers for zigbee2mqtt mqtt device action
   - platform: device
     domain: mqtt
     device_id: !input controller_device
     type: action
-    subtype: single
+    subtype: 'on'
+  - platform: device
+    domain: mqtt
+    device_id: !input controller_device
+    type: action
+    subtype: 'off'
+  - platform: device
+    domain: mqtt
+    device_id: !input controller_device
+    type: action
+    subtype: press
   - platform: device
     domain: mqtt
     device_id: !input controller_device
@@ -194,12 +220,6 @@ trigger:
     device_id: !input controller_device
     type: action
     subtype: release
-  - platform: device
-    domain: mqtt
-    device_id: !input controller_device
-    type: action
-    subtype: double
-  # **YAR** - ADD END -
   # trigger for other integrations
   - platform: event
     event_type:
@@ -208,16 +228,13 @@ trigger:
     event_data:
       device_id: !input controller_device
 condition:
-  - condition: and
-    conditions:
-      # check that the button event is not empty
-      # **YAR** - ADD START - zigbee2mqtt checks for device or entity
-      # **YAR** NEED TO CHECK FOR ZHA        {{ trigger.event.data.command }}{{"_" if trigger.event.data.args|length > 0}}{{ trigger.event.data.args|join("_") }}
+  # check that the button event is not empty
+  # **YAR** - NEED TO CHECK FOR ZHA WHY NOT {{ trigger.event.data.command }}{{"_" if trigger.event.data.args|length > 0}}{{ trigger.event.data.args|join("_") }}
       - >-
         {%- set trigger_action -%}
-        {%- if integration_id == "zigbee2mqtt" and z2m_legacy == false -%}
+        {%- if integration_id == "zigbee2mqtt" and not z2m_legacy -%}
         {{ trigger.payload }}
-        {%- elif integration_id == "zigbee2mqtt" and z2m_legacy == true -%}
+        {%- elif integration_id == "zigbee2mqtt" and z2m_legacy -%}
         {{ trigger.event.data.new_state.state }}
         {%- elif integration_id == "deconz" -%}
         {{ trigger.event.data.event }}
@@ -229,7 +246,6 @@ condition:
       # only for zigbee2mqtt in legacy mode, check if the event is relative to a real state change, and not only some minor changes in the sensor attributes
       # this is required since multiple state_changed events are fired for a single button press, with the result of the automation being triggered multiple times
       - '{{ not (integration_id == "zigbee2mqtt" and z2m_legacy) or trigger.event.data.new_state.state != trigger.event.data.old_state.state }}'
-      # **YAR** - ADD END -
 action:
   # debouncing - when automation is triggered multiple times, the last automation run is the one which completes execution, due to mode restart
   # therefore previous runs must wait for the debounce delay before executing any other action
@@ -239,20 +255,18 @@ action:
   # extract button event from the trigger
   # provide a single string value to check against
   - variables:
-      # **YAR** - ADD START - zigbee2mqtt actions for device or entity
-      # **YAR** NEED TO CHECK FOR ZHA        {{ trigger.event.data.command }}
+      # **YAR** - NEED TO CHECK FOR ZHA WHY NOT {{ trigger.event.data.command }}{{"_" if trigger.event.data.args|length > 0}}{{ trigger.event.data.args|join("_") }}
       trigger_action: >-
-        {%- if integration_id == "zigbee2mqtt" and z2m_legacy == false -%}
+        {%- if integration_id == "zigbee2mqtt" and not z2m_legacy -%}
         {{ trigger.payload }}
-        {%- elif integration_id == "zigbee2mqtt" and z2m_legacy == true -%}
+        {%- elif integration_id == "zigbee2mqtt" and z2m_legacy -%}
         {{ trigger.event.data.new_state.state }}
         {%- elif integration_id == "deconz" -%}
         {{ trigger.event.data.event }}
         {%- elif integration_id == "zha" -%}
-        {{ trigger.event.data.command }}{{"_" if trigger.event.data.args|length > 0}}{{ trigger.event.data.args|join("_") }}
+        {{ trigger.event.data.command }}
         {%- endif -%}
-      # **YAR** - ADD END -
-      trigger_delta: '{{ (as_timestamp(now()) - ((states(helper_last_controller_event) | from_json).t if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{((\"a\": \".*\"|\"t\": \d+\.\d+)(, )?){2}\}$")) else as_timestamp("1970-01-01 00:00:00"))) * 1000 }}'
+      trigger_delta: '{{ (as_timestamp(now()) - ((states(helper_last_controller_event) | from_json).t if helper_last_controller_event is not none and (states(helper_last_controller_event) | regex_match("^\{((\"a\":\".*\"|\"t\":\d+\.\d+)(,)?){2}\}$")) else as_timestamp("1970-01-01 00:00:00"))) * 1000 }}'
   # update helper
   - service: input_text.set_value
     data:
@@ -262,15 +276,57 @@ action:
   - choose:
       - conditions: '{{ trigger_action | string in button_short }}'
         sequence:
-          # fire the event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_short
-          # run the custom action
           - choose:
-              - conditions: []
-                sequence: !input action_button_short
+              # if double press event is enabled
+              - conditions: '{{ button_double_press }}'
+                sequence:
+                  - choose:
+                      # if previous event was a short press
+                      - conditions: '{{ trigger_action | string in states(helper_last_controller_event) and trigger_delta | int <= helper_double_press_delay | int }}'
+                        sequence:
+                          # store the double press event in the last controller event helper
+                          - service: input_text.set_value
+                            data:
+                              entity_id: !input helper_last_controller_event
+                              value: '{{ {"a":"double_press","t":as_timestamp(now())} | to_json }}'
+                          # run the double press action
+                          # fire the event
+                          - event: ahb_controller_event
+                            event_data:
+                              controller: '{{ controller_id }}'
+                              action: button_double
+                          # run the custom action
+                          - choose:
+                              - conditions: []
+                                sequence: !input action_button_double
+                    # previous event was not a short press
+                    default:
+                      # wait for the double press event to occur, within the provided delay
+                      # if the second press is received, automation is restarted
+                      - delay:
+                          milliseconds: '{{ adjusted_double_press_delay }}'
+                      # if delay expires, no second press was received, therefore run the short press action
+                      # run the short press action
+                      # fire the event
+                      - event: ahb_controller_event
+                        event_data:
+                          controller: '{{ controller_id }}'
+                          action: button_short
+                      # run the custom action
+                      - choose:
+                          - conditions: []
+                            sequence: !input action_button_short
+            # if double press event is disabled run the action for the single short press
+            default:
+              # fire the event
+              - event: ahb_controller_event
+                event_data:
+                  controller: '{{ controller_id }}'
+                  action: button_short
+              # run the custom action
+              - choose:
+                  - conditions: []
+                    sequence: !input action_button_short
       - conditions: '{{ trigger_action | string in button_long }}'
         sequence:
           # fire the event only once before looping the action
@@ -298,14 +354,3 @@ action:
           - choose:
               - conditions: []
                 sequence: !input action_button_release
-      - conditions: '{{ trigger_action | string in button_double }}'
-        sequence:
-          # fire the event
-          - event: ahb_controller_event
-            event_data:
-              controller: '{{ controller_id }}'
-              action: button_double
-          # run the custom action
-          - choose:
-              - conditions: []
-                sequence: !input action_button_double

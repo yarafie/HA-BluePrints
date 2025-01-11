@@ -38,15 +38,15 @@ blueprint:
       selector:
         device:
           filter:
-          # **YAR** - source: https://www.zigbee2mqtt.io/devices/WXCJKG11LM.html#aqara-wxcjkg11lm
+          # source: https://www.zigbee2mqtt.io/devices/WXCJKG11LM.html#aqara-wxcjkg11lm
           - integration: mqtt
             manufacturer: Aqara
             model: Opple wireless switch (single band)
-          # **For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+          # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
           - integration: mqtt
             manufacturer: Aqara
             model: Opple wireless switch (single band) (WXCJKG11LM)
-          # **YAR** - source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
+          # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
           - integration: zha
           # **YAR** - TBConfirmed manufacturer: Xiaomi
           # **YAR** - TBConfirmed  model: Aqara Opple 2-gang

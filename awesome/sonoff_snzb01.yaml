@@ -38,16 +38,16 @@ blueprint:
       # **YAR** - ADD START - Selector for devices to choose from
       selector:
         device:
-          # **YAR** - source: https://www.zigbee2mqtt.io/devices/SNZB-01.html#ewelink-snzb-01
+          # source: https://www.zigbee2mqtt.io/devices/SNZB-01.html#ewelink-snzb-01
           filter:
           - integration: mqtt
             manufacturer: eWeLink
             model: Wireless button
-          # **For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+          # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
           - integration: mqtt
             manufacturer: eWeLink
             model: Wireless button (SNZB-01)
-          # **YAR** - source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
+          # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
           - integration: zha
             manufacturer: eWeLink
             model: WB01
@@ -121,7 +121,7 @@ variables:
       button_short: [toggle]
       button_long: ['off']
       button_double: ['on']
-    # **YAR** - source: https://www.zigbee2mqtt.io/devices/SNZB-01.html#ewelink-snzb-01
+    # source: https://www.zigbee2mqtt.io/devices/SNZB-01.html#ewelink-snzb-01
     zigbee2mqtt:
       button_short: [single]
       button_long: [long]

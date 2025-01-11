@@ -40,15 +40,15 @@ blueprint:
       selector:
         device:
           filter:
-          # **YAR** - source: https://www.zigbee2mqtt.io/devices/8718699693985.html#philips-8718699693985
+          # source: https://www.zigbee2mqtt.io/devices/8718699693985.html#philips-8718699693985
           - integration: mqtt
             manufacturer: Philips
             model: Hue smart button
-          # **For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+          # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
           - integration: mqtt
             manufacturer: Philips
             model: Hue smart button (8718699693985)
-          # **YAR** - source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
+          # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
           - integration: zha
             manufacturer: Philips
           # **YAR** - TBConfirmed model: 

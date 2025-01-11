@@ -40,16 +40,16 @@ blueprint:
       # **YAR** - ADD START - Selector for devices to choose from
       selector:
         device:
-          # **YAR** - source: https://www.zigbee2mqtt.io/devices/E1812.html#ikea-e1812
+          # source: https://www.zigbee2mqtt.io/devices/E1812.html#ikea-e1812
           filter:
           - integration: mqtt
             manufacturer: IKEA
             model: TRADFRI shortcut button
-          # **For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+          # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
           - integration: mqtt
             manufacturer: IKEA
             model: TRADFRI shortcut button (E1812)
-          # **YAR** - source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
+          # source: https://github.com/dresden-elektronik/deconz-rest-plugin/wiki/Supported-Devices
           - integration: zha
             manufacturer: IKEA of Sweden
             model: TRADFRI SHORTCUT Button
@@ -173,7 +173,7 @@ variables:
       button_short: ['on']
       button_long: [move_with_on_off_0_83]
       button_release: [stop]
-    # **YAR** - source: https://www.zigbee2mqtt.io/devices/E1812.html#ikea-e1812
+    # source: https://www.zigbee2mqtt.io/devices/E1812.html#ikea-e1812
     zigbee2mqtt:
       button_short: ['on']
       button_long: [brightness_move_up]

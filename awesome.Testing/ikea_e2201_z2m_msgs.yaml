@@ -16,7 +16,7 @@ blueprint:
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**.
 
     ℹ️ Version 2025.01.12
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/ikea_e2201/ikea_e2201.yaml
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/awesome.Testing/ikea_e2201_z2m_msgs.yaml
   domain: automation
   homeassistant:
     min_version: 2023.5.0

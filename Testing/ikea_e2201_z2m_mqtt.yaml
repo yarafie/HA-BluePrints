@@ -16,7 +16,7 @@ blueprint:
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://epmatt.github.io/awesome-ha-blueprints) project**.
 
     ℹ️ Version 2025.01.12
-  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/awesome.Testing/ikea_e2201_z2m_msgs.yaml
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/Testing/ikea_e2201_z2m_mqtt.yaml
   domain: automation
   homeassistant:
     min_version: 2023.5.0
@@ -252,21 +252,40 @@ variables:
   # if integration is zigbee2mqtt and input for controller_entity is set, assume legacy mode
   z2m_legacy: '{{ integration_id == "zigbee2mqtt" and controller_entity not in ["", None, undefined] }}'
   controller_id: '{% if z2m_legacy %}{{controller_entity}}{% else %}{{controller_device}}{% endif %}'
-  # if integration is zigbee2mqtt and not legacy build the mqtt topic to filter out in conditions later
-  expected_topics: '{% if not z2m_legacy %}{{zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/action}}{% endif %}'
 mode: restart
 max_exceeded: silent
-#
-# Triggers Block
 trigger:
   # trigger for zigbee2mqtt entity sensor action events (legacy)
   - platform: event
     event_type: state_changed
     event_data:
       entity_id: !input controller_entity
-  # trigger for zigbee2mqtt mqtt device action
-  - platform: mqtt
-    topic: zigbee2mqtt/+/action
+  # triggers for zigbee2mqtt mqtt device action
+  - platform: device
+    domain: mqtt
+    device_id: !input controller_device
+    type: action
+    subtype: 'on'
+  - platform: device
+    domain: mqtt
+    device_id: !input controller_device
+    type: action
+    subtype: 'off'
+  - platform: device
+    domain: mqtt
+    device_id: !input controller_device
+    type: action
+    subtype: brightness_move_up
+  - platform: device
+    domain: mqtt
+    device_id: !input controller_device
+    type: action
+    subtype: brightness_move_down
+  - platform: device
+    domain: mqtt
+    device_id: !input controller_device
+    type: action
+    subtype: brightness_stop
   # trigger for other integrations
   - platform: event
     event_type:
@@ -275,13 +294,12 @@ trigger:
     event_data:
       device_id: !input controller_device
 condition:
-  # filter out all mqtt messages and only the pass tge set mqtt topic
   - condition: and
     conditions:
       # check that the button event is not empty
       - >-
         {%- set trigger_action -%}
-        {%- if integration_id == "zigbee2mqtt" and not z2m_legacy and trigger.topic in expected_topics -%}
+        {%- if integration_id == "zigbee2mqtt" and not z2m_legacy -%}
         {{ trigger.payload }}
         {%- elif integration_id == "zigbee2mqtt" and z2m_legacy -%}
         {{ trigger.event.data.new_state.state }}
@@ -295,8 +313,6 @@ condition:
       # only for zigbee2mqtt in legacy mode, check if the event is relative to a real state change, and not only some minor changes in the sensor attributes
       # this is required since multiple state_changed events are fired for a single button press, with the result of the automation being triggered multiple times
       - '{{ not (integration_id == "zigbee2mqtt" and z2m_legacy) or trigger.event.data.new_state.state != trigger.event.data.old_state.state }}'
-#
-# Action Block
 action:
   # debouncing - when automation is triggered multiple times, the last automation run is the one which completes execution, due to mode restart
   # therefore previous runs must wait for the debounce delay before executing any other action
@@ -307,7 +323,7 @@ action:
   # provide a single string value to check against
   - variables:
       trigger_action: >-
-        {%- if integration_id == "zigbee2mqtt" and not z2m_legacy and trigger.topic in expected_topics -%}
+        {%- if integration_id == "zigbee2mqtt" and not z2m_legacy -%}
         {{ trigger.payload }}
         {%- elif integration_id == "zigbee2mqtt" and z2m_legacy -%}
         {{ trigger.event.data.new_state.state }}

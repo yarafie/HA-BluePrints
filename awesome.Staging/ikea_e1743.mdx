@@ -53,6 +53,14 @@ This integration provides the entity which must be provided to the blueprint in 
   selector='device'
   required='deCONZ, ZHA, Zigbee2MQTT'
 />
+**YAR************************************
+*<Input
+*  name='Controller Entity'
+*  description='The action sensor of the controller to use for the automation. Choose a value only if the remote is integrated with Zigb*ee2MQTT and Legacy Action Sensors are enabled. This input is deprecated in favor of the Controller Device input, and will be removed in* a future release.'
+*  selector='entity'
+*  deprecated
+*/>
+**YAR************************************
 <Input
   name='Helper - Last Controller Event'
   description='Input Text used to store the last event fired by the controller. You will need to manually create a text input entity for this, please read the blueprint Additional Notes for more info.'
@@ -256,5 +264,7 @@ It's also important to note that the controller doesn't natively support double 
 
   :warning: **Breaking Change**:
 
-  - Removed Support for controller_entity. ([@yarafie](https://github.com/yarafie))
-  - Added Support for Zigbee2MQTT MQTT device triggers. ([@yarafie](https://github.com/yarafie))
+  Migrate to Zigbee2MQTT MQTT Device Triggers. ([@yarafie](https://github.com/yarafie))
+  The `controller_entity` input has been deprecated, and `controller_device` is now mandatory.
+  If you are a Zigbee2MQTT user and plan to update this blueprint, please make sure to remove the `controller_entity` input from your automation config and add the device ID of your controller to the `controller_device` input.
+  To obtain the device ID from your controller, configure the automation from the UI and use the device selector dropdown on the `controller_device` input to select your controller.

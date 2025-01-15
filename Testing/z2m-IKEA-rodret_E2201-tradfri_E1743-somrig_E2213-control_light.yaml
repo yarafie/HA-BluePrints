@@ -1,0 +1,327 @@
+# ==========================================================
+# -------------------------------------------
+# RODRET wireless dimmer/power switch (E2201)
+# TRADFRI on/off switch (E1743)
+# -------------------------------------------
+# Action (enum)
+# The possible values are:
+#  1. on
+#  2. off
+#  3. brightness_move_up
+#  4. brightness_move_down
+#  5. brightness_stop
+# -------------------------------------------
+# SOMRIG shortcut button (E2213)
+# -------------------------------------------
+# Action (enum)
+# The possible values are:
+#  1. 1_initial_press
+#  2. 1_long_press
+#  3. 1_short_release
+#  4. 1_long_release
+#  5. 1_double_press
+#  6. 2_initial_press
+#  7. 2_long_press
+#  8. 2_short_release
+#  9. 2_long_release
+# 10. 2_double_press
+# ==========================================================
+#
+blueprint:
+  domain: automation
+  homeassistant:
+    min_version: 2025.1.0
+  name: z2m - IKEA Rodret (E2201) Tradfri on/off (E1743) or IKEA Somrig (E2213) Light control
+  source_url: https://github.com/yarafie/HA-blueprints/blob/main/Testing/z2m-IKEA-rodret_E2201-tradfri_E1743-somrig_E2213-control_light.yaml
+  description: "## Control a light with **IKEA RODRET** **IKEA TRADRI ON/OFF** or **IKEA SOMRIG** remotes\n\n
+
+    **Only for use with Zigbee2MQTT 2.x**\n\n
+
+    **Assumptions**
+      1. Blueprint will work with the different Zigbee2MQTT modes:
+          - Default: This is the default mode which will use MQTT Device triggers.
+          - Experimental: This is the new experimental event mode and will work if enabled under the Home Assistant tab.
+          - Legacy: This is the old legacy event mode and will workk if enabled under the Home Assistant tab.
+            Legacy mode may be deprecated in the future
+      2. The name you give your device in zigbee2mqtt must be unique and also be the same name you give to Home Assistant when pairing your device.
+
+    Available controls:\n
+
+    - Press **on** (Rodret/Tradfri on/off) or **1 dot** (Somrig) to turn on the light
+    - (Optional: set the target brightness by enabling\n
+      **Helper - Force Brightness**\n
+       and setting a\n
+       **Helper - Brightness** value)\n
+    - Press **off** (Rodret/Tradfri on/off) or **2 dots** (Somrig) button to turn off the light\n
+    - Hold  **on**  (Rodret/Tradfri on/off) or **1 dot**  (Somrig) button to increase the brightness\n
+    - Hold  **off** (Rodret/Tradfri on/off) or **2 dots** (Somrig) button to decrease the brightness down to 1%\n"
+#
+# Define UI and default values
+  input:
+    remote_device:
+      name: (Required) The IKEA Remote
+      description: 'Select IKEA remote (Rodret, Tradfri on/off Somrig)
+        '
+      default: ''
+      selector:
+        device:
+          filter:
+          - integration: mqtt
+            manufacturer: IKEA
+            model: RODRET wireless dimmer/power switch
+          - integration: mqtt
+            manufacturer: IKEA
+            model: TRADFRI on/off switch
+          - integration: mqtt
+            manufacturer: IKEA
+            model: SOMRIG shortcut button
+          - integration: mqtt
+            manufacturer: IKEA
+            model: RODRET wireless dimmer/power switch (E2201)
+          - integration: mqtt
+            manufacturer: IKEA
+            model: TRADFRI on/off switch (E1743)
+          - integration: mqtt
+            manufacturer: IKEA
+            model: SOMRIG shortcut button (E2213)
+          multiple: false
+    z2m_mode:
+      name: (Required) The Zigbee2MQTT Mode
+      description: Integration used for connecting the remote with
+Home Assistant. Select one of the available values.
+      selector:
+        select:
+          options:
+            - Default
+            - Experimental
+            - Legacy
+    light:
+      name: (Required) Light
+      description: The Light to control
+      selector:
+        entity:
+          filter:
+          - domain:
+            - light
+          multiple: false
+    helper_force_brightness:
+      name: Helper - Force brightness
+      description: 'Force the brightness to **Helper - Brightness** value when light turns on.
+        '
+      default: false
+      selector:
+        boolean: {}
+    helper_brightness:
+      name: Helper - Brightness
+      description: 'Target light brightness when turning on.
+        Requires **Helper - Force brightness** to be enabled.
+        '
+      default: 50
+      selector:
+        number:
+          unit_of_measurement: '%'
+          min: 1.0
+          max: 100.0
+          step: 1.0
+          mode: slider
+#
+# Define mode for automatiom
+mode: restart
+max_exceeded: silent
+#
+# Variables
+variables:
+  z2m_mode: !input '{{ z2m_mode | lower }}'
+  device_id: !input remote_device
+  device_name: {{ device_attr( device_id , 'name') }}
+  enity_name: {{ device_attr( device_id, 'name')  |  lower | replace('  ', '_' }}
+  sensor_name: {{ "sensor." + entity_name + "_action" }}
+  event_name: {{ "event." + entity_name + "_action" }}
+#
+# Define Triggers for automation
+triggers:
+# trigger for zigbee2mqtt
+- trigger: event
+  event_type: state_changed
+  event_data:
+    entity_id: {{ sensor. + entity_name + _action }}
+# RODRET/Tradfri on/off
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'on'
+  id: press-on-z2m-e2201
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 'off'
+  id: press-off-z2m-e2201
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_move_up
+  id: hold-on-z2m-e2201
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_move_down
+  id: hold-off-z2m-e2201
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: brightness_stop
+  id: release-z2m-e2201
+# SOMRIG
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 1_short_release
+  id: press-dots1-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 2_short_release
+  id: press-dots2-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 1_double_press
+  id: double-press-dots1-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 2_double_press
+  id: double-press-dots2-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 1_long_press
+  id: hold-dots1-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 2_long_press
+  id: hold-dots2-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 1_long_release
+  id: release-hold-dots1-z2m-e2213
+- trigger: device
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: 2_long_release
+  id: release-hold-dots2-z2m-e2213
+#
+# Condition Block
+condition:
+  - condition: and
+    conditions:
+      # check that the button event is not empty
+      - >-
+        {%- set trigger_action -%}
+        {%- if z2m_mode == "default" -%}
+        {{ trigger.payload }}
+        {%- elif integration_id == "legacy" -%}
+        {{ trigger.event.data.new_state.state }}
+        {%- elif integration_id == "experimental" -%}
+        {{ trigger.event.data.event }}
+        {{ trigger.event.data.new_state.attributes.event_type }}{{ "_" if trigger.event.data.new_state.attributes.direction }}{{trigger.event.data.new_state.attributes.direction if trigger.event.data.new_state.attributes.direction }}
+        {%- endif -%}
+        {%- endset -%}
+        {{ trigger_action not in ["","None"] }}
+#
+# Define actions
+actions:
+- variables:
+    helper_force_brightness: !input helper_force_brightness
+    helper_hold_delay: 0.1
+    helper_hold_dim_step: 5
+    light: !input light
+- choose:
+  - conditions:
+    - condition: trigger
+      id:
+      - press-on-z2m-e2201
+      - press-dots1-z2m-e2213
+    sequence:
+    - choose:
+      - conditions: '{{ helper_force_brightness }}'
+        sequence:
+        - action: light.turn_on
+          target:
+            entity_id: !input light
+          data:
+            brightness_pct: !input helper_brightness
+      default:
+      - action: light.turn_on
+        target:
+          entity_id: !input light
+        data: {}
+  - conditions:
+    - condition: trigger
+      id:
+      - press-off-z2m-e2201
+      - press-dots2-z2m-e2213
+    sequence:
+    - action: light.turn_off
+      target:
+        entity_id: !input light
+      data: {}
+  - conditions:
+    - condition: trigger
+      id:
+      - hold-on-z2m-e2201
+      - hold-dots1-z2m-e2213
+    sequence:
+    - repeat:
+        while:
+        - condition: trigger
+          id:
+          - hold-on-z2m-e2201
+          - hold-dots1-z2m-e2213
+        sequence:
+        - parallel:
+          - action: light.turn_on
+            target:
+              entity_id: !input light
+            data:
+              brightness_step_pct: '{{ helper_hold_dim_step }}'
+          - delay: '{{ helper_hold_delay }}'
+  - conditions:
+    - condition: trigger
+      id:
+      - hold-off-z2m-e2201
+      - hold-dots2-z2m-e2213
+    sequence:
+    - repeat:
+        while:
+        - condition: template
+          value_template: '{{ state_attr(light, ''brightness'') | int / 255 > helper_hold_dim_step/100
+            }}'
+        sequence:
+        - parallel:
+          - action: light.turn_on
+            data:
+              brightness_step_pct: '{{ helper_hold_dim_step | int * -1 }}'
+            target:
+              entity_id: !input light
+          - delay: '{{ helper_hold_delay }}'
+    - action: light.turn_on
+      data:
+        brightness_pct: 1
+      target:
+        entity_id: !input light

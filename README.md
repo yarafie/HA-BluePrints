@@ -21,6 +21,7 @@ Current Devices Supported by each blueprint:
 # z2m-IKEA-rodret_E2201-tradfri_E1743-somrig_E2213-control_light.yamlmodel: RODRET wireless dimmer/power switch (E2201)
 * model: TRADFRI on/off switch (E1743)
 * model: SOMRIG shortcut button (E2213)
+* Very Basic Integration
 
 <a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fz2m-+IKEA-rodret_E2201-tradfri_E1743-somrig_E2213-control_light.yaml" target="_blank" rel="noreferrer noopener"><img src="https://my.home-assistant.io/badges/blueprint_import.svg" alt="Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled." /></a>
 
@@ -30,6 +31,10 @@ Current Devices Supported by each blueprint:
 
 <a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fz2m-+IKEA-styrbar_E2001_E2002.yaml" target="_blank" rel="noreferrer noopener"><img src="https://my.home-assistant.io/badges/blueprint_import.svg" alt="Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled." /></a>
 
+## Changelog: 
+* 19, April 2025: Strybar Blueprint was expanded to add an optional looping for any of the long button presses. This needs to be enabled in the blueprint. 
+Two safe guards were added in order to stop any infinite loops, a count was added to loop a finite number of times and also a timeout was added to stop the wait for the release of button. 
+Additionaly, virtual double press actions was also added to any of the buttons which also needs to be exposed.
 
 # z2m-IKEA-tradfri_shortcut_button_E1812-control_anything.yaml
 * model: TRADFRI shortcut button (E1812)

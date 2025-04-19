@@ -39,18 +39,22 @@
 # 10. arrow_right_hold
 # 11. arrow_right_release
 # ==========================================================
+# Blueprint Metadata
 blueprint:
-  homeassistant:
-    min_version: 2024.10.0
+  name: z2m - IKEA STYRBAR remote control (E2001/E2002)
   author: yarafie
   domain: automation
-  name: z2m - IKEA STYRBAR remote control (E2001/E2002)
-  description: "This blueprint is for the IKEA STYRBAR square, 4-button remote when used with zigbee2mqtt.
+  description: |
+
+    This blueprint is for the IKEA STYRBAR square, 4-button remote when used with zigbee2mqtt.
     It is for general use so all buttons can be connected to any action of your choice.
     It also provides a looping action for any of the 4 buttons, when holding down a button (long press), which needs to be enabled in the blueprint.
     For the looping action during a long press, it will wait until it receives a release action.
     As a fail safe, looping will stop whenever the set loop count is reached or whenever the timeout for the wait is reached, both set in the blueprint.
-    It also provides a virtual double press action for any of the 4 buttons, which needs to be enabled in the blueprint."
+    It also provides a virtual double press action for any of the 4 buttons, which needs to be enabled in the blueprint.
+
+  homeassistant:
+    min_version: 2024.10.0
   source_url: https://github.com/yarafie/HA-BluePrints/blob/main/z2m-IKEA-styrbar_E2001_E2002.yaml
 #
 # Define UI and default values

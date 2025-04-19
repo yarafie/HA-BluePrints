@@ -61,8 +61,8 @@ blueprint:
   input:
     # Device Selector
     remote_device:
-      name: Styrbar Remote
-      description: Select IKEA STYRBAR remote to use
+      name: (Required) IKEA Styrbar Remote Control
+      description: Select IKEA STYRBAR Remote Control
       default: []
       selector:
         device:
@@ -77,47 +77,47 @@ blueprint:
               model: STYRBAR remote control (E2001/E2002)
           multiple: false
     # Inputs for custom actions
-    # Brightness Up/Down Buttons
+    # Up/Down Buttons
     button_up_short:
-      name: Brightness Up button - short press
-      description: Action to run when SHORT press on Brightness Up button
-      default: []
-      selector:
-        action: {}
-    button_down_short:
-      name: Brightness Down button - short press
-      description: Action to run when SHORT press on Brightness Down button
+      name: Up button - short press
+      description: Action to run when SHORT press on Up button
       default: []
       selector:
         action: {}
     button_up_long:
-      name: Brightness Up button - long press
-      description: Action to run when LONG press on Brightness Up button
-      default: []
-      selector:
-        action: {}
-    button_down_long:
-      name: Brightness Down button - long press
-      description: Action to run when LONG press on Brightness Down button
+      name: Up button - long press
+      description: Action to run when LONG press on Up button
       default: []
       selector:
         action: {}
     button_up_double:
-      name: Brightness Up button - double press
-      description: Action to run when DOUBLE press on Brightness Up button
+      name: Up button - double press
+      description: Action to run when DOUBLE press on Up button
+      default: []
+      selector:
+        action: {}
+    button_down_short:
+      name: Down button - short press
+      description: Action to run when SHORT press on Down button
+      default: []
+      selector:
+        action: {}
+    button_down_long:
+      name: Down button - long press
+      description: Action to run when LONG press on Down button
       default: []
       selector:
         action: {}
     button_down_double:
-      name: Brightness Down button - double press
-      description: Action to run when DOUBLE press on Brightness Down button
+      name: Down button - double press
+      description: Action to run when DOUBLE press on Down button
       default: []
       selector:
         action: {}
-    # The release action for the Brightness Up/Down buttons share one action since there is only one release trigger
+    # The release action for the Up/Down buttons share one action since there is only one release trigger
     button_long_release:
-      name: Brightness Up/Down button - long press released
-      description: Action to run when LONG press on Brightness (Up or Down) button is released
+      name: Up/Down button - long press released
+      description: Action to run when LONG press on (Up or Down) button is released
       default: []
       selector:
         action: {}
@@ -177,13 +177,13 @@ blueprint:
       collapsed: true
       input:
         button_up_long_loop_enabled:
-          name: Brightness Up button long press enable loop until release
+          name: Up button long press enable loop until release
           description: Loop the Up button action until the button is released.
           default: false
           selector:
             boolean:
         button_up_long_max_loop_repeats:
-          name: Brightness Up button long press - Maximum loop repeats
+          name: Up button long press - Maximum loop repeats
           description: >-
             Maximum number of repeats for the custom action, when looping is enabled.
             Use it as a safety limit to prevent an endless loop in case the corresponding release event is not received.
@@ -195,13 +195,13 @@ blueprint:
               mode: slider
               step: 1.0
         button_down_long_loop_enabled:
-          name: Brightness Down button long press enable loop until release
+          name: Down button long press enable loop until release
           description: Loop the Down button action until the button is released.
           default: false
           selector:
             boolean:
         button_down_long_max_loop_repeats:
-          name: Brightness Down button long press - Maximum loop repeats
+          name: Down button long press - Maximum loop repeats
           description: >-
             Maximum number of repeats for the custom action, when looping is enabled.
             Use it as a safety limit to prevent an endless loop in case the corresponding release event is not received.
@@ -249,7 +249,7 @@ blueprint:
               mode: slider
               step: 1.0
         helper_long_press_timeout:
-          name: (Optional) Helper - Long Press timeout in milliseconds
+          name: Helper - Long Press timeout in milliseconds
           description: >-
             Timeout for the custom long press action, when looping is enabled.
             Decrease this value if you notice that the long press action is not stopping.
@@ -270,7 +270,7 @@ blueprint:
       collapsed: true
       input:
         button_up_double_press_exposed:
-          name: Enable Brightness Up button double press
+          name: Enable  Up button double press
           description: >-
             Choose whether or not to enable the virtual double press action for the button.
             Turn this on if you are providing an action for the double press action.
@@ -278,7 +278,7 @@ blueprint:
           selector:
             boolean:
         button_down_double_press_exposed:
-          name: Enable Brightness Down button double press
+          name: Enable  Down button double press
           description: >-
             Choose whether or not to enable the virtual double press action for the button.
             Turn this on if you are providing an action for the double press action.
@@ -347,7 +347,7 @@ variables:
 #
 # Define Triggers for automation
 triggers:
-# TOP AND BOTTOM BUTTONS
+# Up AND Down BUTTONS
 - trigger: device
   id: z2m-button-up-short
   domain: mqtt
@@ -371,7 +371,7 @@ triggers:
   device_id: !input remote_device
   type: action
   subtype: brightness_move_down
-# The release action for the Brightness Up/Down buttons share one action since there is only one release trigger
+# The release action for the  Up/Down buttons share one action since there is only one release trigger
 - trigger: device
   id: z2m-button-long-release
   domain: mqtt

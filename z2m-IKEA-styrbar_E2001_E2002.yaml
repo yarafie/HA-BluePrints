@@ -141,7 +141,7 @@ blueprint:
       selector:
         action: {}
     button_left_release:
-      name: Left Arrow button - releaseed
+      name: Left Arrow button - released
       description: Action to run when RELEASE press on LEFT arrow button
       default: []
       selector:
@@ -355,6 +355,7 @@ triggers:
   type: action
   subtype: 'on'
 - trigger: device
+  id: z2m-button-down-short
   domain: mqtt
   device_id: !input remote_device
   type: action

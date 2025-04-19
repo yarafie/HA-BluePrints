@@ -270,7 +270,7 @@ blueprint:
       collapsed: true
       input:
         button_up_double_press_exposed:
-          name: Enable  Up button double press
+          name: Enable Up button double press
           description: >-
             Choose whether or not to enable the virtual double press action for the button.
             Turn this on if you are providing an action for the double press action.
@@ -278,7 +278,7 @@ blueprint:
           selector:
             boolean:
         button_down_double_press_exposed:
-          name: Enable  Down button double press
+          name: Enable Down button double press
           description: >-
             Choose whether or not to enable the virtual double press action for the button.
             Turn this on if you are providing an action for the double press action.

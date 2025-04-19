@@ -14,13 +14,13 @@
 # | Light small ( bottom ) | hold    | brightness_move_down |
 # | Light small ( bottom ) | release | brightness_stop      |
 # |---------------------------------------------------------|
-# | Arrow left             | push    | arrow_left_click     |
-# | Arrow left             | hold    | arrow_left_hold      |
-# | Arrow left             | release | arrow_left_release   |
-# |---------------------------------------------------------|
 # | Arrow right            | push    | arrow_right_click    |
 # | Arrow right            | hold    | arrow_right_hold     |
 # | Arrow right            | release | arrow_right_release  |
+# |---------------------------------------------------------|
+# | Arrow left             | push    | arrow_left_click     |
+# | Arrow left             | hold    | arrow_left_hold      |
+# | Arrow left             | release | arrow_left_release   |
 # |---------------------------------------------------------|
 # | For the arrow buttons it seems that the hold/move       | 
 # | action  takes a bit longer to be send.                  |
@@ -32,12 +32,12 @@
 #  3. brightness_move_up
 #  4. brightness_move_down
 #  5. brightness_stop
-#  6. arrow_left_click
-#  7. arrow_left_hold
-#  8. arrow_left_release
-#  9. arrow_right_click
-# 10. arrow_right_hold
-# 11. arrow_right_release
+#  6. arrow_right_click
+#  7. arrow_right_hold
+#  8. arrow_right_release
+#  9. arrow_left_click
+# 10. arrow_left_hold
+# 11. arrow_left_release
 # ==========================================================
 # Blueprint Metadata
 blueprint:
@@ -121,31 +121,7 @@ blueprint:
       default: []
       selector:
         action: {}
-    # Arrows Left/Right Buttons
-    button_left_short:
-      name: Left Arrow button - short press
-      description: Action to run when SHORT press on LEFT arrow button
-      default: []
-      selector:
-        action: {}
-    button_left_long:
-      name: Left Arrow button - long press
-      description: Action to run when LONG press on LEFT arrow button
-      default: []
-      selector:
-        action: {}
-    button_left_double:
-      name: Left Arrow button - double press
-      description: Action to run when DOUBLE press on LEFT arrow button
-      default: []
-      selector:
-        action: {}
-    button_left_release:
-      name: Left Arrow button - released
-      description: Action to run when RELEASE press on LEFT arrow button
-      default: []
-      selector:
-        action: {}
+    # Arrows Right/Left Buttons
     button_right_short:
       name: Right Arrow button - short press
       description: Action to run when SHORT press on RIGHT arrow button
@@ -167,6 +143,30 @@ blueprint:
     button_right_release:
       name: Right Arrow button - released
       description: Action to run when RELEASE press on RIGHT arrow button
+      default: []
+      selector:
+        action: {}
+    button_left_short:
+      name: Left Arrow button - short press
+      description: Action to run when SHORT press on LEFT arrow button
+      default: []
+      selector:
+        action: {}
+    button_left_long:
+      name: Left Arrow button - long press
+      description: Action to run when LONG press on LEFT arrow button
+      default: []
+      selector:
+        action: {}
+    button_left_double:
+      name: Left Arrow button - double press
+      description: Action to run when DOUBLE press on LEFT arrow button
+      default: []
+      selector:
+        action: {}
+    button_left_release:
+      name: Left Arrow button - released
+      description: Action to run when RELEASE press on LEFT arrow button
       default: []
       selector:
         action: {}
@@ -212,14 +212,14 @@ blueprint:
               max: 50.0
               mode: slider
               step: 1.0
-        button_left_long_loop_enabled:
-          name: Left Arrow button long press enable loop until release
-          description: Loop the Left Arrow button action until the button is released.
+        button_right_long_loop_enabled:
+          name: Right Arrow button long press enable loop until release
+          description: Loop the Right Arrow button action until the button is released.
           default: false
           selector:
             boolean:
-        button_left_long_max_loop_repeats:
-          name: Left Arrow button long press - Maximum loop repeats
+        button_right_long_max_loop_repeats:
+          name: Right Arrow button long press - Maximum loop repeats
           description: >-
             Maximum number of repeats for the custom action, when looping is enabled.
             Use it as a safety limit to prevent an endless loop in case the corresponding release event is not received.
@@ -230,14 +230,14 @@ blueprint:
               max: 50.0
               mode: slider
               step: 1.0
-        button_right_long_loop_enabled:
-          name: Right Arrow button long press enable loop until release
-          description: Loop the Right Arrow button action until the button is released.
+        button_left_long_loop_enabled:
+          name: Left Arrow button long press enable loop until release
+          description: Loop the Left Arrow button action until the button is released.
           default: false
           selector:
             boolean:
-        button_right_long_max_loop_repeats:
-          name: Right Arrow button long press - Maximum loop repeats
+        button_left_long_max_loop_repeats:
+          name: Left Arrow button long press - Maximum loop repeats
           description: >-
             Maximum number of repeats for the custom action, when looping is enabled.
             Use it as a safety limit to prevent an endless loop in case the corresponding release event is not received.
@@ -285,16 +285,16 @@ blueprint:
           default: false
           selector:
             boolean:
-        button_left_double_press_exposed:
-          name: Enable Left Arrow button double press
-          description: >-
+        button_right_double_press_exposed:
+          name: Enable Right Arrow button double press
             Choose whether or not to enable the virtual double press action for the button.
             Turn this on if you are providing an action for the double press action.
           default: false
           selector:
             boolean:
-        button_right_double_press_exposed:
-          name: Enable Right Arrow button double press
+        button_left_double_press_exposed:
+          name: Enable Left Arrow button double press
+          description: >-
             Choose whether or not to enable the virtual double press action for the button.
             Turn this on if you are providing an action for the double press action.
           default: false
@@ -333,16 +333,16 @@ variables:
   button_up_long_max_loop_repeats: !input button_up_long_max_loop_repeats
   button_down_long_loop_enabled: !input button_down_long_loop_enabled
   button_down_long_max_loop_repeats: !input button_down_long_max_loop_repeats
-  button_left_long_loop_enabled: !input button_left_long_loop_enabled
-  button_left_long_max_loop_repeats: !input button_left_long_max_loop_repeats
   button_right_long_loop_enabled: !input button_right_long_loop_enabled
   button_right_long_max_loop_repeats: !input button_right_long_max_loop_repeats
+  button_left_long_loop_enabled: !input button_left_long_loop_enabled
+  button_left_long_max_loop_repeats: !input button_left_long_max_loop_repeats
   helper_long_press_timeout: !input helper_long_press_timeout
   # Button Inputs for Virtual Double Press
   button_up_double_press_exposed: !input button_up_double_press_exposed
   button_down_double_press_exposed: !input button_down_double_press_exposed
-  button_left_double_press_exposed: !input button_left_double_press_exposed
   button_right_double_press_exposed: !input button_right_double_press_exposed
+  button_left_double_press_exposed: !input button_left_double_press_exposed
   helper_double_press_delay: !input helper_double_press_delay
 #
 # Define Triggers for automation
@@ -379,25 +379,6 @@ triggers:
   device_id: !input remote_device
   type: action
   subtype: brightness_stop
-# ARROW LEFT BUTTON
-- trigger: device
-  id: z2m-button-left-short
-  domain: mqtt
-  device_id: !input remote_device
-  type: action
-  subtype: arrow_left_click
-- trigger: device
-  id: z2m-button-left-long
-  domain: mqtt
-  device_id: !input remote_device
-  type: action
-  subtype: arrow_left_hold
-- trigger: device
-  id: z2m-button-left-release
-  domain: mqtt
-  device_id: !input remote_device
-  type: action
-  subtype: arrow_left_release
 # ARROW RIGHT BUTTON
 - trigger: device
   id: z2m-button-right-short
@@ -417,6 +398,25 @@ triggers:
   device_id: !input remote_device
   type: action
   subtype: arrow_right_release
+# ARROW LEFT BUTTON
+- trigger: device
+  id: z2m-button-left-short
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: arrow_left_click
+- trigger: device
+  id: z2m-button-left-long
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: arrow_left_hold
+- trigger: device
+  id: z2m-button-left-release
+  domain: mqtt
+  device_id: !input remote_device
+  type: action
+  subtype: arrow_left_release
 #
 # Conditions Block
 conditions:
@@ -535,55 +535,6 @@ actions:
                   - conditions: []
                     sequence: !input button_down_short
       #
-      # Actions for left Button Single Press / Double Press Virtual
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-left-short
-        sequence:
-          # Check If Double Press is Exposed
-          - if:
-              - condition: template
-                value_template: '{{ button_left_double_press_exposed }}'
-            # Handle left Double Press Event
-            then:
-              - choose:
-                  # Wait for trigger for second Button Press to treat as a Double Press
-                  - conditions: []
-                    sequence:
-                      - wait_for_trigger:
-                          # z2m trigger for short press
-                          - trigger: device
-                            domain: mqtt
-                            device_id: !input remote_device
-                            type: action
-                            subtype: arrow_left_click
-                        timeout:
-                          milliseconds: '{{ helper_double_press_delay }}'
-                        continue_on_timeout: true
-                      # If a second button short press is triggered wait.trigger.idx will be defined
-                      - if:
-                          - condition: template
-                            value_template: '{{ wait.trigger.idx is defined }}'
-                        # Second short press trigger was received send Custom Action as a Double Press
-                        then:
-                          # Run the custom action
-                          - choose:
-                              - conditions: []
-                                sequence: !input button_left_double
-                        # Second short press trigger was not received send Custom Action as a Single Press
-                        else:
-                          # Run the Custom Action as a Single Press
-                          - choose:
-                              - conditions: []
-                                sequence: !input button_left_short
-            # Double Press is Not Exposed So Run Custom Action as a Single Press
-            else:
-              # Run the Custom Action as a Single Press
-              - choose:
-                  - conditions: []
-                    sequence: !input button_left_short
-      #
       # Actions for right Button Single Press / Double Press Virtual
       - conditions:
           - condition: trigger
@@ -632,6 +583,55 @@ actions:
               - choose:
                   - conditions: []
                     sequence: !input button_right_short
+      #
+      # Actions for left Button Single Press / Double Press Virtual
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-left-short
+        sequence:
+          # Check If Double Press is Exposed
+          - if:
+              - condition: template
+                value_template: '{{ button_left_double_press_exposed }}'
+            # Handle left Double Press Event
+            then:
+              - choose:
+                  # Wait for trigger for second Button Press to treat as a Double Press
+                  - conditions: []
+                    sequence:
+                      - wait_for_trigger:
+                          # z2m trigger for short press
+                          - trigger: device
+                            domain: mqtt
+                            device_id: !input remote_device
+                            type: action
+                            subtype: arrow_left_click
+                        timeout:
+                          milliseconds: '{{ helper_double_press_delay }}'
+                        continue_on_timeout: true
+                      # If a second button short press is triggered wait.trigger.idx will be defined
+                      - if:
+                          - condition: template
+                            value_template: '{{ wait.trigger.idx is defined }}'
+                        # Second short press trigger was received send Custom Action as a Double Press
+                        then:
+                          # Run the custom action
+                          - choose:
+                              - conditions: []
+                                sequence: !input button_left_double
+                        # Second short press trigger was not received send Custom Action as a Single Press
+                        else:
+                          # Run the Custom Action as a Single Press
+                          - choose:
+                              - conditions: []
+                                sequence: !input button_left_short
+            # Double Press is Not Exposed So Run Custom Action as a Single Press
+            else:
+              # Run the Custom Action as a Single Press
+              - choose:
+                  - conditions: []
+                    sequence: !input button_left_short
       #
       # Actions for Up Button Long Press
       - conditions:
@@ -717,49 +717,6 @@ actions:
                                           then:
                                             - stop: button_down_released
       #
-      # Actions for Left Button Long Press
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-left-long
-        sequence:
-          # Run the custom action only once before entering repeat
-          - choose:
-              - conditions: []
-                sequence: !input button_left_long
-          # Handle custom action looping if looping is enabled
-          - choose:
-              - conditions: '{{ button_left_long_loop_enabled }}'
-                sequence:
-                  # Repeat the Long Press Actions for the set number of loops
-                  - repeat:
-                      count: !input button_left_long_max_loop_repeats
-                      sequence:
-                        - parallel:
-                            - sequence: !input button_left_long
-                            - sequence:
-                                - choose:
-                                    - conditions: []
-                                      sequence:
-                                        # Wait for trigger for Button Long Press Release to stop looping
-                                        - wait_for_trigger:
-                                            # z2m triggers
-                                            - trigger: device
-                                              domain: mqtt
-                                              device_id: !input remote_device
-                                              type: action
-                                              subtype: arrow_left_release
-                                          timeout:
-                                            milliseconds: !input helper_long_press_timeout
-                                          continue_on_timeout: true
-                                        # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
-                                        - if:
-                                            - condition: template
-                                              value_template: '{{ wait.trigger.idx is defined }}'
-                                          then:
-                                            - stop: button_left_released
-
-      #
       # Actions for Right Button Long Press
       - conditions:
           - condition: trigger
@@ -801,7 +758,48 @@ actions:
                                               value_template: '{{ wait.trigger.idx is defined }}'
                                           then:
                                             - stop: button_right_released
-
+      #
+      # Actions for Left Button Long Press
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-left-long
+        sequence:
+          # Run the custom action only once before entering repeat
+          - choose:
+              - conditions: []
+                sequence: !input button_left_long
+          # Handle custom action looping if looping is enabled
+          - choose:
+              - conditions: '{{ button_left_long_loop_enabled }}'
+                sequence:
+                  # Repeat the Long Press Actions for the set number of loops
+                  - repeat:
+                      count: !input button_left_long_max_loop_repeats
+                      sequence:
+                        - parallel:
+                            - sequence: !input button_left_long
+                            - sequence:
+                                - choose:
+                                    - conditions: []
+                                      sequence:
+                                        # Wait for trigger for Button Long Press Release to stop looping
+                                        - wait_for_trigger:
+                                            # z2m triggers
+                                            - trigger: device
+                                              domain: mqtt
+                                              device_id: !input remote_device
+                                              type: action
+                                              subtype: arrow_left_release
+                                          timeout:
+                                            milliseconds: !input helper_long_press_timeout
+                                          continue_on_timeout: true
+                                        # If a Button Long Release is triggered wait.trigger.idx will be defined stop the loop before long_max_loop_repeats
+                                        - if:
+                                            - condition: template
+                                              value_template: '{{ wait.trigger.idx is defined }}'
+                                          then:
+                                            - stop: button_left_released
       #
       # Actions for Up/Down Button long press released
       - conditions:
@@ -814,17 +812,6 @@ actions:
               - conditions: []
                 sequence: !input button_long_release
       #
-      # Actions for Left Button long press released
-      - conditions:
-          - condition: trigger
-            id:
-              - z2m-button-left-release
-        sequence:
-          # run the custom action
-          - choose:
-              - conditions: []
-                sequence: !input button_left_release
-      #
       # Actions for Right Button long press released
       - conditions:
           - condition: trigger
@@ -835,3 +822,14 @@ actions:
           - choose:
               - conditions: []
                 sequence: !input button_right_release
+      #
+      # Actions for Left Button long press released
+      - conditions:
+          - condition: trigger
+            id:
+              - z2m-button-left-release
+        sequence:
+          # run the custom action
+          - choose:
+              - conditions: []
+                sequence: !input button_left_release

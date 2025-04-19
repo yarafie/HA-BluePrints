@@ -269,7 +269,7 @@ blueprint:
       icon: mdi:remote
       collapsed: true
       input:
-        button_up_double_press_enabled:
+        button_up_double_press_exposed:
           name: Enable Brightness Up button double press
           description: >-
             Choose whether or not to enable the virtual double press action for the button.
@@ -277,7 +277,7 @@ blueprint:
           default: false
           selector:
             boolean:
-        button_down_double_press_enabled:
+        button_down_double_press_exposed:
           name: Enable Brightness Down button double press
           description: >-
             Choose whether or not to enable the virtual double press action for the button.
@@ -285,7 +285,7 @@ blueprint:
           default: false
           selector:
             boolean:
-        button_left_double_press_enabled:
+        button_left_double_press_exposed:
           name: Enable Left Arrow button double press
           description: >-
             Choose whether or not to enable the virtual double press action for the button.
@@ -293,7 +293,7 @@ blueprint:
           default: false
           selector:
             boolean:
-        button_right_double_press_enabled:
+        button_right_double_press_exposed:
           name: Enable Right Arrow button double press
             Choose whether or not to enable the virtual double press action for the button.
             Turn this on if you are providing an action for the double press action.
@@ -661,7 +661,7 @@ actions:
                                             # z2m triggers
                                             - trigger: device
                                               domain: mqtt
-                                              device_id: !input controller_device
+                                              device_id: !input remote_device
                                               type: action
                                               subtype: brightness_stop
                                           timeout:
@@ -703,7 +703,7 @@ actions:
                                             # z2m triggers
                                             - trigger: device
                                               domain: mqtt
-                                              device_id: !input controller_device
+                                              device_id: !input remote_device
                                               type: action
                                               subtype: brightness_stop
                                           timeout:
@@ -745,7 +745,7 @@ actions:
                                             # z2m triggers
                                             - trigger: device
                                               domain: mqtt
-                                              device_id: !input controller_device
+                                              device_id: !input remote_device
                                               type: action
                                               subtype: arrow_left_release
                                           timeout:
@@ -788,7 +788,7 @@ actions:
                                             # z2m triggers
                                             - trigger: device
                                               domain: mqtt
-                                              device_id: !input controller_device
+                                              device_id: !input remote_device
                                               type: action
                                               subtype: arrow_right_release
                                           timeout:

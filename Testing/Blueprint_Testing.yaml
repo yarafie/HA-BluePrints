@@ -71,8 +71,8 @@ actions:
       message: >-
            controller_id: {{ controller_id }} \n
            module_option: {{ module_mode_option }} \n
-           topic_var    : {{ topic_var }}
-           payload_var  : {{ payload_var }}
+           topic_var    : {{ topic_var }} \n
+           payload_var  : {{ payload_var }} \n
 #           topic        : zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
 #           payload      : "{"device_mode":" {{ module_mode_option }} }"
       data:

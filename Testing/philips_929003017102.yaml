@@ -46,6 +46,28 @@ blueprint:
               manufacturer: Philips
               model: Hue wall switch module (929003017102)
           multiple: false
+    ## inputs switch mode selection
+    module_mode_options_section:
+      name: Module Mode options
+      icon: mdi:remote
+      collapsed: true
+      input:
+        module_mode_option:
+          name: (Optional) The mode the module operates
+          description: The mode the module to set to
+          default: single_rocker
+          selector:
+            select:
+              options:
+                - label: Single Rocker
+                  value: single_rocker
+                - label: Single Push Button
+                  value: single_push_button
+                - label: Dual Rocker
+                  value: dual_rocker
+                - label: Dual Push Button
+                  value: dual_push_button
+              mode: dropdown
     # inputs for custom actions
     action_switch_left_short:
       name: (Optional) Left switch short press
@@ -83,28 +105,6 @@ blueprint:
       default: []
       selector:
         action:
-    ## inputs switch mode selection
-    module_mode_options_section:
-      name: Module Mode options
-      icon: mdi:remote
-      collapsed: false
-      input:
-        module_mode_option:
-          name: (Optional) The mode the module operates
-          description: The mode the module to set to
-          default: single_rocker
-          selector:
-            select:
-              options:
-                - label: Single Rocker
-                  value: single_rocker
-                - label: Single Push Button
-                  value: single_push_button
-                - label: Dual Rocker
-                  value: dual_rocker
-                - label: Dual Push Button
-                  value: dual_push_button
-              mode: dropdown
     # inputs for looping custom actions on long button press events until the corresponding release event is received
     long_press_options_section:
       name: Long Press options

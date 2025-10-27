@@ -23,7 +23,7 @@ blueprint:
 
     🚀 This blueprint is part of the **[Awesome HA Blueprints](https://yarafie.github.io/awesome-ha-blueprints) project**. Please consider **[leaving a star on GitHub](https://github.com/EPMatt/awesome-ha-blueprints)**! 🌟
 
-  source_url: https://github.com/yarafie/awesome-ha-blueprints/blob/main/blueprints/controllers/philips_929003017102/philips_929003017102.yaml
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/Testing/philips_929003017102.yaml
   domain: automation
   homeassistant:
     min_version: 2024.10.0

@@ -48,8 +48,8 @@ variables:
   # Controller ID
   controller_id: !input controller_device
   module_mode_option: !input module_mode_option
-  topic_var: zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
-  payload_var: "{"device_mode":" {{ module_mode_option }} }"
+#  topic_var: zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
+#  payload_var: "{"device_mode":" {{ module_mode_option }} }"
 #
 # Mode Block
 mode: single
@@ -71,10 +71,10 @@ actions:
       message: >-
            controller_id: {{ controller_id }}
            module_option: {{ module_mode__option }}
-           topic_var    : {{ topic_var }}
-           payload_var  : {{ payload_var }}
-           topic        : zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
-           payload      : "{"device_mode":" {{ module_mode_option }} }"
+#           topic_var    : {{ topic_var }}
+#           payload_var  : {{ payload_var }}
+#           topic        : zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
+#           payload      : "{"device_mode":" {{ module_mode_option }} }"
       data:
         alert_once: true
         ttl: 0

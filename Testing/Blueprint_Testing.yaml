@@ -23,16 +23,12 @@ blueprint:
               manufacturer: IKEA
           multiple: false
     ## inputs switch mode selection
-    module_mode_options_section:
-      name: Module Mode options
-      icon: mdi:remote
-      collapsed: true
-      input:
-        module_mode_option:
-          name: (Optional) The mode the module operates
-          description: Loop the on button action until the button is released.
-          default: single_rocker
-          select:
+    module_mode_option:
+      name: (Optional) The mode the module operates
+      description: The mode the module to set to
+      default: single_rocker
+      selector:
+        select:
             options:
               - label: Single Rocker
                 value: single_rocker
@@ -42,6 +38,7 @@ blueprint:
                 value: dual_rocker
               - label: Dual Push Button
                 value: dual_push_button
+            mode: dropdown
 #
 # Automation schema
 variables:

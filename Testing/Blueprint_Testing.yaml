@@ -45,6 +45,7 @@ variables:
   # Controller ID
   controller_id: !input controller_device
   module_mode_option: !input module_mode_option
+  friendly_name: {{ state_attr(controller_id, 'friendly_name') }}
 #
 # Mode Block
 mode: single
@@ -63,7 +64,8 @@ conditions: []
 actions:
   # Define Action Variables
   - variables:
-      topic_var: zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
+      friendly_name: {{ state_attr(controller_id, 'friendly_name') }}
+      #topic_var: zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
       #payload_var: "{"device_mode":" {{ module_mode_option }} }"
   # Actions
   - action: notify.mobile_app_yasirs_fold4
@@ -73,8 +75,9 @@ actions:
       message: >-
            controller_id: {{ controller_id }} \n
            module_option: {{ module_mode_option }} \n
-           topic_var    : {{ topic_var }} \n
-           #payload_var  : {{ payload_var }} \n
+           friendly_name: {{ friendly_name }} \n
+#           topic_var    : {{ topic_var }} \n
+#           payload_var  : {{ payload_var }} \n
 #           topic        : zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
 #           payload      : "{"device_mode":" {{ module_mode_option }} }"
       data:

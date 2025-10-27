@@ -80,7 +80,7 @@ actions:
       message: >-
            controller_id: {{ controller_id }} \n
            module_option: {{ module_mode_option }} \n
-           topic        : 'zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set' \n
+           topic        : zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set \n
            payload      : {{ payload }} \n
 #           topic        : {{ topic }} \n
 #           friendly_name: {{ friendly_name }} \n

@@ -26,7 +26,7 @@ blueprint:
     module_mode_options_section:
       name: Module Mode options
       icon: mdi:remote
-      collapsed: true
+      collapsed: false
       input:
         module_mode_option:
           name: (Optional) The mode the module operates

@@ -83,15 +83,15 @@ blueprint:
       default: []
       selector:
         action:
-    # inputs switch mode selection
+    ## inputs switch mode selection
     module_mode_options_section:
       name: Module Mode options
       icon: mdi:remote
-      collapsed: true
+      collapsed: false
       input:
         module_mode_option:
           name: (Optional) The mode the module operates
-          description: Loop the on button action until the button is released.
+          description: The mode the module to set to
           default: single_rocker
           selector:
             select:
@@ -163,6 +163,7 @@ blueprint:
 variables:
   # Controller ID
   controller_id: !input controller_device
+  module_mode_option: !input module_mode_option
   # integration id used to select items in the action mapping
   # integration type is set from trigger.id
   integration_id: '{{ trigger.id.split("-")[0] }}'
@@ -171,7 +172,6 @@ variables:
   switch_left_long_max_loop_repeats: !input switch_left_long_max_loop_repeats
   switch_right_long_loop: !input switch_right_long_loop
   switch_right_long_max_loop_repeats: !input switch_right_long_max_loop_repeats
-  module_mode_option: !input module_mode_option
   helper_long_press_delay: !input helper_long_press_delay
   # mapping between actions and integrations
   actions_mapping:
@@ -260,7 +260,7 @@ actions:
   - action: mqtt.publish
     data:
       topic: zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set
-      payload: {"device_mode": {{ module_mode_option }}}
+      payload: "{"device_mode": {{ module_mode_option }}}"
   #
   # choose the sequence to run based on the received trigger
   - choose:

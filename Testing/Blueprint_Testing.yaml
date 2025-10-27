@@ -69,7 +69,7 @@ conditions: []
 actions:
   # Define Action Variables
   - variables:
-      topic: "zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set"
+      topic: 'zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set'
       payload: '{"device_mode": {{ module_mode_option }}}'
       #topic: "zigbee2mqtt/{{ friendly_name }}/set"
   # Actions

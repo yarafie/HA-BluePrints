@@ -260,7 +260,7 @@ actions:
   - action: mqtt.publish
     data:
       topic: zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set
-      payload: "{"device_mode": {{ module_mode_option }}}"
+      payload: '{"device_mode":" {{ module_mode_option }}}'
   #
   # choose the sequence to run based on the received trigger
   - choose:

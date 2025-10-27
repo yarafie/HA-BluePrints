@@ -23,22 +23,27 @@ blueprint:
               manufacturer: IKEA
           multiple: false
     ## inputs switch mode selection
-    module_mode_option:
-      name: (Optional) The mode the module operates
-      description: The mode the module to set to
-      default: single_rocker
-      selector:
-        select:
-            options:
-              - label: Single Rocker
-                value: single_rocker
-              - label: Single Push Button
-                value: single_push_button
-              - label: Dual Rocker
-                value: dual_rocker
-              - label: Dual Push Button
-                value: dual_push_button
-            mode: dropdown
+    module_mode_options_section:
+      name: Module Mode options
+      icon: mdi:remote
+      collapsed: true
+      input:
+        module_mode_option:
+          name: (Optional) The mode the module operates
+          description: The mode the module to set to
+          default: single_rocker
+          selector:
+            select:
+              options:
+                - label: Single Rocker
+                  value: single_rocker
+                - label: Single Push Button
+                  value: single_push_button
+                - label: Dual Rocker
+                  value: dual_rocker
+                - label: Dual Push Button
+                  value: dual_push_button
+              mode: dropdown
 #
 # Automation schema
 variables:
@@ -64,8 +69,9 @@ conditions: []
 actions:
   # Define Action Variables
   - variables:
-      topic_var: "zigbee2mqtt/{{ friendly_name }}/set"
-      payload_var: '{"device_mode": {{ module_mode_option }}}'
+      #topic_var: "zigbee2mqtt/{{ friendly_name }}/set"
+      topic: "zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set"
+      payload: '{"device_mode": {{ module_mode_option }}}'
   # Actions
   - action: notify.mobile_app_yasirs_fold4
     metadata: {}
@@ -75,8 +81,8 @@ actions:
            controller_id: {{ controller_id }} \n
            module_option: {{ module_mode_option }} \n
            friendly_name: {{ friendly_name }} \n
-           topic_var    : {{ topic_var }} \n
-           payload_var  : {{ payload_var }} \n
+           topic        : {{ topic }} \n
+           payload      : {{ payload }} \n
 #           topic        : zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
 #           payload      : "{"device_mode":" {{ module_mode_option }} }"
       data:

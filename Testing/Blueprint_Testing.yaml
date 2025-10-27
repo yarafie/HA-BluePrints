@@ -64,9 +64,8 @@ conditions: []
 # Actions Block
 actions:
   # Define Action Variables
-#  - variables:
-#      friendly_name: "{{ trigger.payload_json }}"
-      #topic_var: zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
+  - variables:
+      topic_var: "zigbee2mqtt/{{ friendly_name }}/set"
       #payload_var: "{"device_mode":" {{ module_mode_option }} }"
   # Actions
   - action: notify.mobile_app_yasirs_fold4
@@ -77,7 +76,7 @@ actions:
            controller_id: {{ controller_id }} \n
            module_option: {{ module_mode_option }} \n
            friendly_name: {{ friendly_name }} \n
-#           topic_var    : {{ topic_var }} \n
+           topic_var    : {{ topic_var }} \n
 #           payload_var  : {{ payload_var }} \n
 #           topic        : zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
 #           payload      : "{"device_mode":" {{ module_mode_option }} }"

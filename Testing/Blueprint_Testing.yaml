@@ -1,0 +1,91 @@
+# Blueprint Metadata
+blueprint:
+  name: Blueprint Testing
+  description: |
+    # Blueprint Testing
+
+    Blueprint Testing
+
+  source_url: ource_url: https://github.com/yarafie/HA-BluePrints/blob/main/Testing/Blueprint_Testing.yaml
+  domain: automation
+  homeassistant:
+    min_version: 2024.10.0
+  # Device Selector
+  input:
+    controller_device:
+      name: Device
+      description: The device to use for the Blueprint Testing.
+      default: ''
+      selector:
+        device:
+          filter:
+            - integration: mqtt
+              manufacturer: IKEA
+          multiple: false
+    ## inputs switch mode selection
+    module_mode_options_section:
+      name: Module Mode options
+      icon: mdi:remote
+      collapsed: true
+      input:
+        module_mode_option:
+          name: (Optional) The mode the module operates
+          description: Loop the on button action until the button is released.
+          default: single_rocker
+          select:
+            options:
+              - label: Single Rocker
+                value: single_rocker
+              - label: Single Push Button
+                value: single_push_button
+              - label: Dual Rocker
+                value: dual_rocker
+              - label: Dual Push Button
+                value: dual_push_button
+#
+# Automation schema
+variables:
+  # Controller ID
+  controller_id: !input controller_device
+  module_mode_option: !input module_mode_option
+  topic_var: zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
+  payload_var: "{"device_mode":" {{ module_mode_option }} }"
+#
+# Mode Block
+mode: single
+max_exceeded: silent
+#
+# Triggers Block
+#triggers:
+
+# Conditions Block
+#conditions:
+#
+# Actions Block
+actions:
+  #
+  - action: notify.mobile_app_yasirs_fold4
+    metadata: {}
+    data:
+      title: "Blueprint Testing"
+      message: >-
+           controller_id: {{ controller_id }}
+           module_option: {{ module_mode__option }}
+           topic_var    : {{ topic_var }}
+           payload_var  : {{ payload_var }}
+           topic        : zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
+           payload      : "{"device_mode":" {{ module_mode_option }} }"
+      data:
+        alert_once: true
+        ttl: 0
+        priority: high
+        group: Blueprint Testing
+        channel: alarm_stream
+        color: "#03a9f4"
+        notification_icon: mdi:cctv
+        sticky: true
+        push:
+          interruption-level: passive
+          sound:
+            name: default
+            volume: 1

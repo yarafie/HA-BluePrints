@@ -69,8 +69,8 @@ actions:
     data:
       title: "Blueprint Testing"
       message: >-
-           controller_id: {{ controller_id }}
-           module_option: {{ module_mode__option }}
+           controller_id: {{ controller_id }} \n
+           module_option: {{ module_mode_option }} \n
 #           topic_var    : {{ topic_var }}
 #           payload_var  : {{ payload_var }}
 #           topic        : zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set

@@ -53,10 +53,13 @@ mode: single
 max_exceeded: silent
 #
 # Triggers Block
-#triggers:
-
+triggers:
+  - platform: event
+    event_type: blueprint_testing_event
+    event_data:
+      controller_id: !input controller_device
 # Conditions Block
-#conditions:
+conditions: []
 #
 # Actions Block
 actions:

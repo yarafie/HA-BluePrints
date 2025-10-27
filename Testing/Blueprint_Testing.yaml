@@ -45,7 +45,7 @@ variables:
   # Controller ID
   controller_id: !input controller_device
   module_mode_option: !input module_mode_option
-  friendly_name: {{ state_attr(controller_id, 'friendly_name') }}
+  #friendly_name: {{ state_attr(controller_id, 'friendly_name') }}
 #
 # Mode Block
 mode: single

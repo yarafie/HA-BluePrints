@@ -50,7 +50,7 @@ variables:
   # Controller ID
   controller_id: !input controller_device
   module_mode_option: !input module_mode_option
-  friendly_name: "{{ device_attr(controller_id, 'name') | default('Unknown Device') }}"
+#  friendly_name: "{{ device_attr(controller_id, 'name') | default('Unknown Device') }}"
 #
 # Mode Block
 mode: single
@@ -68,10 +68,10 @@ conditions: []
 # Actions Block
 actions:
   # Define Action Variables
-  - variables:
-      #topic_var: "zigbee2mqtt/{{ friendly_name }}/set"
-      topic: "zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set"
-      payload: '{"device_mode": {{ module_mode_option }}}'
+#  - variables:
+#      #topic_var: "zigbee2mqtt/{{ friendly_name }}/set"
+#      topic: "zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set"
+#      payload: '{"device_mode": {{ module_mode_option }}}'
   # Actions
   - action: notify.mobile_app_yasirs_fold4
     metadata: {}
@@ -80,11 +80,11 @@ actions:
       message: >-
            controller_id: {{ controller_id }} \n
            module_option: {{ module_mode_option }} \n
-           friendly_name: {{ friendly_name }} \n
-           topic        : {{ topic }} \n
-           payload      : {{ payload }} \n
-#           topic        : zigbee2mqtt/{{ state_attr(controller_id, 'friendly_name') }}/set
-#           payload      : "{"device_mode":" {{ module_mode_option }} }"
+#           friendly_name: {{ friendly_name }} \n
+#           topic        : {{ topic }} \n
+#           payload      : {{ payload }} \n
+           topic        : "zigbee2mqtt/{{ device_attr(controller_id, 'name') }}/set" \n
+           payload      : '{"device_mode": {{ module_mode_option }}}' \n
       data:
         alert_once: true
         ttl: 0

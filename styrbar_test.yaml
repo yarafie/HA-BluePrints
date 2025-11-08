@@ -77,73 +77,84 @@ blueprint:
 mode: restart # Ensures only one action sequence runs at a time, critical for hold loops.
 #
 # Define Triggers for automation
-trigger:
+triggers:
   ##############################################
   # Zigbee2MQTT TRIGGERS (Using device action subtypes)
   ##############################################
   # UP Click (Short Press)
-  - id: z2m-up-click
+  - trigger: device
+    id: z2m-up-click
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: 'on'
   # UP Hold (Move Start)
-  - id: z2m-up-hold
+  - trigger: device
+    id: z2m-up-hold
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: brightness_move_up
   # DOWN Click (Short Press)
-  - id: z2m-down-click
+  - trigger: device
+    id: z2m-down-click
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: 'off'
   # DOWN Hold (Move Start)
-  - id: z2m-down-hold
+  - trigger: device
+    id: z2m-down-hold
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: brightness_move_down
   # UP/DOWN Release (Used internally to stop hold loops)
   # The release action for the Up/Down buttons share one action since there is only one release trigger
-  - id: z2m-up-down-release
+  - trigger: device
+    id: z2m-up-down-release
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: brightness_stop
   # RIGHT Click
-  - id: z2m-right-click
+  - trigger: device
+    id: z2m-right-click
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: arrow_right_click
   # RIGHT Hold
-  - id: z2m-right-hold
+  - trigger: device
+    id: z2m-right-hold
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: arrow_right_hold
   # RIGHT Release
-  - id: z2m-right-release
+  - trigger: device
+    id: z2m-right-release
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: arrow_right_release
   # LEFT Click
-  - id: z2m-left-click
+  - trigger: device
+    id: z2m-left-click
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: arrow_left_click
   # LEFT Hold
-  - id: z2m-left-hold
+  - trigger: device
+    id: z2m-left-hold
     device_id: !input button_device
     domain: mqtt
     type: action
     subtype: arrow_left_hold
   # LEFT Release
-  - id: z2m-left-release
+  - trigger: device
+    id: z2m-left-release
     device_id: !input button_device
     domain: mqtt
     type: action
@@ -267,7 +278,7 @@ trigger:
 #
 # Actions Block
 actions: # The main execution sequence.
-  - choose: []
+  - choose:
     #########################################################
     # UP BUTTON CLICK
     #########################################################

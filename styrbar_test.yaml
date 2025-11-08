@@ -320,13 +320,14 @@ actions: # The main execution sequence.
               - delay:
                   milliseconds: 80
             until:
-              - conditions: or
-                # Condition 1: STOP if release event is received
-                - condition: trigger
-                  id: [zha-release, z2m-up-down-release]
-                # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
-                - condition: template
-                value_template: "{{ repeat.index >= 250 }}"
+              - condition: or
+                conditions:
+                  # Condition 1: STOP if release event is received
+                  - condition: trigger
+                    id: [zha-release, z2m-up-down-release]
+                  # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
+                  - condition: template
+                    value_template: "{{ repeat.index >= 250 }}"
     #########################################################
     # DOWN HOLD LOOP (Repeats action until release or timeout)
     #########################################################
@@ -340,13 +341,14 @@ actions: # The main execution sequence.
               - delay:
                   milliseconds: 80
             until:
-              - conditions: or
-                # Condition 1: STOP if release event is received
-                - condition: trigger
-                  id: [zha-release, z2m-up-down-release]
-                # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
-                - condition: template
-                  value_template: "{{ repeat.index >= 250 }}"
+              - condition: or
+                conditions:
+                  # Condition 1: STOP if release event is received
+                  - condition: trigger
+                    id: [zha-release, z2m-up-down-release]
+                  # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
+                  - condition: template
+                    value_template: "{{ repeat.index >= 250 }}"
     #########################################################
     # RIGHT HOLD LOOP (Repeats action until release or timeout)
     #########################################################
@@ -360,13 +362,14 @@ actions: # The main execution sequence.
               - delay:
                   milliseconds: 80
             until:
-              - conditions: or
-                # Condition 1: STOP if release event is received
-                - condition: trigger
-                  id: [zha-left-right-release, z2m-right-release]
-                # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
-                - condition: template
-                  value_template: "{{ repeat.index >= 250 }}"
+              - condition: or
+                conditions:
+                  # Condition 1: STOP if release event is received
+                  - condition: trigger
+                    id: [zha-left-right-release, z2m-right-release]
+                  # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
+                  - condition: template
+                    value_template: "{{ repeat.index >= 250 }}"
     #########################################################
     # LEFT HOLD LOOP (Repeats action until release or timeout)
     #########################################################
@@ -380,10 +383,11 @@ actions: # The main execution sequence.
               - delay:
                   milliseconds: 80
             until:
-              - conditions: or
-                # Condition 1: STOP if release event is received
-                - condition: trigger
-                  id: [zha-left-right-release, z2m-left-release]
-                # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
-                - condition: template
-                  value_template: "{{ repeat.index >= 250 }}"
+              - condition: or
+                conditions:
+                  # Condition 1: STOP if release event is received
+                  - condition: trigger
+                    id: [zha-left-right-release, z2m-left-release]
+                  # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
+                  - condition: template
+                    value_template: "{{ repeat.index >= 250 }}"

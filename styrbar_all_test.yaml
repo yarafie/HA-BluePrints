@@ -1,10 +1,10 @@
 blueprint:
-  name: IKEA STYRBAR – Full Button Control (Click/Hold Only - Z2M)
+  name: IKEA STYRBAR – Full Button Control (Click/Hold Only, ZHA Events + Z2M)
   author: yarafie
   domain: automation
   source_url: https://github.com/yarafie/HA-BluePrints/blob/main/styrbar_test.yaml
   description: >
-    Full support for STYRBAR remote - Zigbee2MQTT.
+    Full support for STYRBAR remote with ZHA (using zha_event for all actions) and Zigbee2MQTT.
     Allows defining Click and Hold actions for all four buttons. Release events are handled internally to stop hold loops.
     Includes a 20-second timeout on hold actions for robustness against missed signals.
   homeassistant:
@@ -159,6 +159,122 @@ triggers:
     domain: mqtt
     type: action
     subtype: arrow_left_release
+  ##############################################
+  # ZHA TRIGGERS (Using zha_event commands)
+  ##############################################
+  # NOTE: These events typically come from endpoint_id: 1.
+  # --- UP/DOWN (Brightness) TRIGGERS ---
+  # UP Click (command: 'on' / cluster_id: 6)
+  - id: zha-up-click
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: 'on'
+      # endpoint_id: 1, cluster_id: 6 (On/Off Cluster)
+  # UP Hold (command: move / cluster_id: 8)
+  - id: zha-up-hold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: move
+      args:
+        # Args: [MoveMode, Rate, OptionsMask, OptionsOverride, TransitionTime]
+        - 0       # 1. MoveMode: 0 = Up (Increase Level/Brightness)
+        - 80      # 2. Rate: 80 units/second (Speed of change)
+        - 0       # 3. OptionsMask
+        - 0       # 4. OptionsOverride
+        - 0       # 5. TransitionTime
+      # endpoint_id: 1, cluster_id: 8 (Level Control Cluster)
+  # DOWN Click (command: 'off' / cluster_id: 6)
+  - id: zha-down-click
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: 'off'
+      # endpoint_id: 1, cluster_id: 6
+  # DOWN Hold (command: move / cluster_id: 8)
+  - id: zha-down-hold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: move
+      args:
+        # Args: [MoveMode, Rate, OptionsMask, OptionsOverride, TransitionTime]
+        - 1       # 1. MoveMode: 1 = Down (Decrease Level/Brightness)
+        - 80      # 2. Rate: 80 units/second (Speed of change)
+        - 0       # 3. OptionsMask
+        - 0       # 4. OptionsOverride
+        - 0       # 5. TransitionTime
+      # endpoint_id: 1, cluster_id: 8
+  # UP/DOWN Release (Used internally to stop hold loops)
+  - id: zha-up-down-release
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: stop
+      # endpoint_id: 1, cluster_id: 8
+  # --- LEFT/RIGHT (Color/Scene) TRIGGERS ---
+  # RIGHT Click (command: recall / cluster_id: 5)
+  - id: zha-right-click
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: recall
+      args:
+        # Args: [SceneID, GroupID]
+        - 1       # 1. Scene ID (Maps to 'right' function)
+        - 0       # 2. Group ID (0 is the global group)
+      # endpoint_id: 1, cluster_id: 5
+  # RIGHT Hold (command: move_to_level_with_on_off / cluster_id: 8)
+  - id: zha-right-hold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: move_to_level_with_on_off
+      args:
+        # Args: [Level, TransitionTime]
+        - 254     # 1. Level (Highest value, used by quirk to signal 'increase/right')
+        - 1       # 2. Transition Time
+      # endpoint_id: 1, cluster_id: 8
+  # LEFT Click (command: recall / cluster_id: 5)
+  - id: zha-left-click
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: recall
+      args:
+        # Args: [SceneID, GroupID]
+        - 2       # 1. Scene ID (Maps to 'left' function)
+        - 0       # 2. Group ID (0 is the global group)
+      # endpoint_id: 1, cluster_id: 5 (Scenes Cluster)
+  # LEFT Hold (command: move_to_level_with_on_off / cluster_id: 8)
+  - id: zha-left-hold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: move_to_level_with_on_off
+      args:
+        # Args: [Level, TransitionTime]
+        - 1       # 1. Level (Lowest value, used by quirk to signal 'decrease/left')
+        - 1       # 2. Transition Time
+      # endpoint_id: 1, cluster_id: 8 (Level Control Cluster)
+  # LEFT/RIGHT Release (Internal ZHA event, not used for blueprint actions)
+  - id: zha-left-right-release
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: stop_move
+      # endpoint_id: 1, cluster_id: 8
 #
 # Actions Block
 actions: # The main execution sequence.
@@ -168,35 +284,35 @@ actions: # The main execution sequence.
     #########################################################
     - conditions:
         - condition: trigger
-          id: [z2m-up-click]
+          id: [zha-up-click, z2m-up-click]
       sequence: !input action_up_click
     #########################################################
     # DOWN BUTTON CLICK
     #########################################################
     - conditions:
         - condition: trigger
-          id: [z2m-down-click]
+          id: [zha-down-click, z2m-down-click]
       sequence: !input action_down_click
     #########################################################
     # RIGHT BUTTON CLICK
     #########################################################
     - conditions:
         - condition: trigger
-          id: [z2m-right-click]
+          id: [zha-right-click, z2m-right-click]
       sequence: !input action_right_click
     #########################################################
     # LEFT BUTTON CLICK
     #########################################################
     - conditions:
         - condition: trigger
-          id: [z2m-left-click]
+          id: [zha-left-click, z2m-left-click]
       sequence: !input action_left_click
     #########################################################
     # UP HOLD LOOP (Repeats action until release or timeout)
     #########################################################
     - conditions:
         - condition: trigger
-          id: [z2m-up-hold]
+          id: [zha-up-hold, z2m-up-hold]
       sequence:
         - repeat:
             # The loop continues WHILE the index is less than 250 (failsafe)
@@ -210,7 +326,9 @@ actions: # The main execution sequence.
               - wait_for_trigger:
                   # Wait for the specific trigger IDs defined for the release events
                   - platform: automation
-                    id: z2m-up-down-release
+                    trigger_id: z2m-up-down-release
+                  - platform: automation
+                    trigger_id: zha-up-down-release
                 timeout:
                   milliseconds: 80
                 continue_on_timeout: true # If 80ms pass, continue running the sequence below
@@ -225,7 +343,7 @@ actions: # The main execution sequence.
     #########################################################
     - conditions:
         - condition: trigger
-          id: [z2m-down-hold]
+          id: [zha-down-hold, z2m-down-hold]
       sequence:
         - repeat:
             # The loop continues WHILE the index is less than 250 (failsafe)
@@ -239,7 +357,9 @@ actions: # The main execution sequence.
               - wait_for_trigger:
                   # Wait for the specific trigger IDs defined for the release events
                   - platform: automation
-                    id: z2m-up-down-release
+                    trigger_id: zha-left-right-release
+                  - platform: automation
+                    trigger_id: z2m-left-release
                 timeout:
                   milliseconds: 80
                 continue_on_timeout: true # If 80ms pass, continue running the sequence below
@@ -254,7 +374,7 @@ actions: # The main execution sequence.
     #########################################################
     - conditions:
         - condition: trigger
-          id: [z2m-right-hold]
+          id: [zha-right-hold, z2m-right-hold]
       sequence:
         - repeat:
             # The loop continues WHILE the index is less than 250 (failsafe)
@@ -268,7 +388,9 @@ actions: # The main execution sequence.
               - wait_for_trigger:
                   # Wait for the specific trigger IDs defined for the release events
                   - platform: automation
-                    id: z2m-right-release
+                    trigger_id: zha-left-right-release
+                  - platform: automation
+                    trigger_id: z2m-right-release
                 timeout:
                   milliseconds: 80
                 continue_on_timeout: true # If 80ms pass, continue running the sequence below
@@ -283,7 +405,16 @@ actions: # The main execution sequence.
     #########################################################
     - conditions:
         - condition: trigger
-          id: [z2m-left-hold]
+          id: [zha-left-hold, z2m-left-hold]
+        # This condition is typically not necessary if the automation is only
+        # triggered by the hold events, but if you want to keep the intent
+        # of filtering to only hold events, this must be inside the main
+        # automation's 'condition' block, NOT here. 
+        # Since this block starts the 'sequence', we assume the automation was 
+        # already triggered correctly by one of the hold events.
+        # We will remove it for correctness and simplicity.
+        # Original: - condition: trigger
+        #           id: [zha-left-hold, z2m-left-hold]
       sequence:
         - repeat:
             # The loop continues WHILE the index is less than 250 (failsafe)
@@ -295,8 +426,11 @@ actions: # The main execution sequence.
               - choose: !input action_left_hold
               # 2. **WAIT FOR RELEASE OR TIMEOUT (80ms)**
               - wait_for_trigger:
+                  # Wait for the specific trigger IDs defined for the release events
                   - platform: automation
-                    id: z2m-left-release
+                    trigger_id: zha-left-right-release
+                  - platform: automation
+                    trigger_id: z2m-left-release
                 timeout:
                   milliseconds: 80
                 continue_on_timeout: true # If 80ms pass, continue running the sequence below

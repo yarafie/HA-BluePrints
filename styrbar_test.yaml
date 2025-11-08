@@ -208,9 +208,12 @@ actions: # The main execution sequence.
               - choose: !input action_left_hold
               # 2. **WAIT FOR RELEASE OR TIMEOUT (80ms)**
               - wait_for_trigger:
-                  # Wait for the specific trigger IDs defined for the release events
-                  - platform: automation
-                    id: z2m-up-down-release
+                  # z2m triggers
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input button_device
+                    type: action
+                    subtype: brightness_stop
                 timeout:
                   milliseconds: 80
                 continue_on_timeout: true # If 80ms pass, continue running the sequence below
@@ -237,9 +240,12 @@ actions: # The main execution sequence.
               - choose: !input action_left_hold
               # 2. **WAIT FOR RELEASE OR TIMEOUT (80ms)**
               - wait_for_trigger:
-                  # Wait for the specific trigger IDs defined for the release events
-                  - platform: automation
-                    id: z2m-up-down-release
+                  # z2m triggers
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input button_device
+                    type: action
+                    subtype: brightness_stop
                 timeout:
                   milliseconds: 80
                 continue_on_timeout: true # If 80ms pass, continue running the sequence below
@@ -266,9 +272,12 @@ actions: # The main execution sequence.
               - choose: !input action_left_hold
               # 2. **WAIT FOR RELEASE OR TIMEOUT (80ms)**
               - wait_for_trigger:
-                  # Wait for the specific trigger IDs defined for the release events
-                  - platform: automation
-                    id: z2m-right-release
+                  # z2m triggers
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input button_device
+                    type: action
+                    subtype: arrow_right_release
                 timeout:
                   milliseconds: 80
                 continue_on_timeout: true # If 80ms pass, continue running the sequence below
@@ -295,8 +304,12 @@ actions: # The main execution sequence.
               - choose: !input action_left_hold
               # 2. **WAIT FOR RELEASE OR TIMEOUT (80ms)**
               - wait_for_trigger:
-                  - platform: automation
-                    id: z2m-left-release
+                  # z2m triggers
+                  - trigger: device
+                    domain: mqtt
+                    device_id: !input button_device
+                    type: action
+                    subtype: arrow_left_release
                 timeout:
                   milliseconds: 80
                 continue_on_timeout: true # If 80ms pass, continue running the sequence below

@@ -1,0 +1,374 @@
+blueprint:
+  name: IKEA STYRBAR – Full Button Control (Click/Hold Only, ZHA Events + Z2M)
+  author: yarafie
+  domain: automation
+  source_url: https://github.com/yarafie/HA-BluePrints/blob/main/styrbar_test.yaml
+  description: >
+    Full support for STYRBAR remote with ZHA (using zha_event for all actions) and Zigbee2MQTT.
+    Allows defining Click and Hold actions for all four buttons. Release events are handled internally to stop hold loops.
+    Includes a 20-second timeout on hold actions for robustness against missed signals.
+  homeassistant:
+    min_version: 2024.10.0
+#
+# Define UI and default values
+  input:
+    # Device Selector
+    button_device:
+      name: (Required) IKEA Styrbar Remote Control
+      description: Select IKEA STYRBAR Remote Control
+      default: []
+      selector:
+        device:
+          filter:
+            # source: https://www.zigbee2mqtt.io/devices/E2001_E2002.html#ikea-e2001-e2002
+            - integration: mqtt
+              manufacturer: IKEA
+              model: STYRBAR remote control
+            # For backwards compatability with z2m 1.x. model_id is added to end of model rather than a seperate attribute in z2m 2.x
+            - integration: mqtt
+              manufacturer: IKEA
+              model: STYRBAR remote control (E2001/E2002)
+          multiple: false
+    # Inputs for custom actions
+    action_up_click:
+      name: UP Click Action (e.g., Turn Device On)
+      default: []
+      selector:
+        action: {}
+    action_up_hold:
+      name: UP Hold Action (Loop)
+      description: Action to repeat continuously while UP is held (e.g., Increase Brightness/Volume).
+      selector:
+        action: {}
+    action_down_click:
+      name: DOWN Click Action (e.g., Turn Device Off)
+      default: []
+      selector:
+        action: {}
+    action_down_hold:
+      name: DOWN Hold Action (Loop)
+      description: Action to repeat continuously while DOWN is held (e.g., Decrease Brightness/Volume).
+      selector:
+        action: {}
+    action_right_click:
+      name: RIGHT Click Action
+      default: []
+      selector:
+        action: {}
+    action_right_hold:
+      name: RIGHT Hold Action (Loop)
+      description: Action to repeat continuously while RIGHT is held (e.g., Decrease Brightness/Volume).
+      default: []
+      selector:
+        action: {}
+    action_left_click:
+      name: LEFT Click Action
+      default: []
+      selector:
+        action: {}
+    action_left_hold:
+      name: LEFT Hold Action (Loop)
+      description: Action to repeat continuously while LEFT is held (e.g., Decrease Brightness/Volume).
+      default: []
+      selector:
+        action: {}
+#
+# Define mode for automatiom
+mode: restart # Ensures only one action sequence runs at a time, critical for hold loops.
+#
+# Define Triggers for automation
+trigger:
+  ##############################################
+  # Zigbee2MQTT TRIGGERS (Using device action subtypes)
+  ##############################################
+  # UP Click (Short Press)
+  - id: z2m-up-click
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: 'on'
+  # UP Hold (Move Start)
+  - id: z2m-up-hold
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: brightness_move_up
+  # DOWN Click (Short Press)
+  - id: z2m-down-click
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: 'off'
+  # DOWN Hold (Move Start)
+  - id: z2m-down-hold
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: brightness_move_down
+  # UP/DOWN Release (Used internally to stop hold loops)
+  # The release action for the Up/Down buttons share one action since there is only one release trigger
+  - id: z2m-up-down-release
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: brightness_stop
+  # RIGHT Click
+  - id: z2m-right-click
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: arrow_right_click
+  # RIGHT Hold
+  - id: z2m-right-hold
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: arrow_right_hold
+  # RIGHT Release
+  - id: z2m-right-release
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: arrow_right_release
+  # LEFT Click
+  - id: z2m-left-click
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: arrow_left_click
+  # LEFT Hold
+  - id: z2m-left-hold
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: arrow_left_hold
+  # LEFT Release
+  - id: z2m-left-release
+    device_id: !input button_device
+    domain: mqtt
+    type: action
+    subtype: arrow_left_release
+  ##############################################
+  # ZHA TRIGGERS (Using zha_event commands)
+  ##############################################
+  # NOTE: These events typically come from endpoint_id: 1.
+  # --- UP/DOWN (Brightness) TRIGGERS ---
+  # UP Click (command: 'on' / cluster_id: 6)
+  - id: zha-up-click
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: 'on'
+      # endpoint_id: 1, cluster_id: 6 (On/Off Cluster)
+  # UP Hold (command: move / cluster_id: 8)
+  - id: zha-up-hold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: move
+      args:
+        # Args: [MoveMode, Rate, OptionsMask, OptionsOverride, TransitionTime]
+        - 0       # 1. MoveMode: 0 = Up (Increase Level/Brightness)
+        - 80      # 2. Rate: 80 units/second (Speed of change)
+        - 0       # 3. OptionsMask
+        - 0       # 4. OptionsOverride
+        - 0       # 5. TransitionTime
+      # endpoint_id: 1, cluster_id: 8 (Level Control Cluster)
+  # UP/DOWN Release (Used internally to stop hold loops)
+  - id: zha-release
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: stop
+      # endpoint_id: 1, cluster_id: 8
+  # DOWN Click (command: 'off' / cluster_id: 6)
+  - id: zha-down-click
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: 'off'
+      # endpoint_id: 1, cluster_id: 6
+  # DOWN Hold (command: move / cluster_id: 8)
+  - id: zha-down-hold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: move
+      args:
+        # Args: [MoveMode, Rate, OptionsMask, OptionsOverride, TransitionTime]
+        - 1       # 1. MoveMode: 1 = Down (Decrease Level/Brightness)
+        - 80      # 2. Rate: 80 units/second (Speed of change)
+        - 0       # 3. OptionsMask
+        - 0       # 4. OptionsOverride
+        - 0       # 5. TransitionTime
+      # endpoint_id: 1, cluster_id: 8
+  # --- LEFT/RIGHT (Color/Scene) TRIGGERS ---
+  # RIGHT Click (command: recall / cluster_id: 5)
+  - id: zha-right-click
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: recall
+      args:
+        # Args: [SceneID, GroupID]
+        - 1       # 1. Scene ID (Maps to 'right' function)
+        - 0       # 2. Group ID (0 is the global group)
+      # endpoint_id: 1, cluster_id: 5
+  # RIGHT Hold (command: move_to_level_with_on_off / cluster_id: 8)
+  - id: zha-right-hold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: move_to_level_with_on_off
+      args:
+        # Args: [Level, TransitionTime]
+        - 254     # 1. Level (Highest value, used by quirk to signal 'increase/right')
+        - 1       # 2. Transition Time
+      # endpoint_id: 1, cluster_id: 8
+  # LEFT Click (command: recall / cluster_id: 5)
+  - id: zha-left-click
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: recall
+      args:
+        # Args: [SceneID, GroupID]
+        - 2       # 1. Scene ID (Maps to 'left' function)
+        - 0       # 2. Group ID (0 is the global group)
+      # endpoint_id: 1, cluster_id: 5 (Scenes Cluster)
+  # LEFT Hold (command: move_to_level_with_on_off / cluster_id: 8)
+  - id: zha-left-hold
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: move_to_level_with_on_off
+      args:
+        # Args: [Level, TransitionTime]
+        - 1       # 1. Level (Lowest value, used by quirk to signal 'decrease/left')
+        - 1       # 2. Transition Time
+      # endpoint_id: 1, cluster_id: 8 (Level Control Cluster)
+  # LEFT/RIGHT Release (Internal ZHA event, not used for blueprint actions)
+  - id: zha-left-right-release
+    platform: event
+    event_type: zha_event
+    event_data:
+      device_id: !input button_device
+      command: stop_move
+      # endpoint_id: 1, cluster_id: 8
+#
+# Actions Block
+actions: # The main execution sequence.
+  - choose: []
+    #########################################################
+    # UP BUTTON CLICK
+    #########################################################
+    - conditions:
+        - condition: trigger
+          id: [zha-up-click, z2m-up-click]
+      sequence: !input action_up_click
+    #########################################################
+    # DOWN BUTTON CLICK
+    #########################################################
+    - conditions:
+        - condition: trigger
+          id: [zha-down-click, z2m-down-click]
+      sequence: !input action_down_click
+    #########################################################
+    # RIGHT BUTTON CLICK
+    #########################################################
+    - conditions:
+        - condition: trigger
+          id: [zha-right-click, z2m-right-click]
+      sequence: !input action_right_click
+    #########################################################
+    # LEFT BUTTON CLICK
+    #########################################################
+    - conditions:
+        - condition: trigger
+          id: [zha-left-click, z2m-left-click]
+      sequence: !input action_left_click
+    #########################################################
+    # UP HOLD LOOP (Repeats action until release or timeout)
+    #########################################################
+    - conditions:
+        - condition: trigger
+          id: [zha-up-hold, z2m-up-hold]
+      sequence:
+        - repeat:
+            sequence:
+              - choose: !input action_up_hold
+              - delay:
+                  milliseconds: 80
+            until:
+              # Condition 1: STOP if release event is received
+              - condition: trigger
+                id: [zha-release, z2m-up-down-release]
+              # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
+              - condition: template
+                value_template: "{{ repeat.index >= 250 }}"
+    #########################################################
+    # DOWN HOLD LOOP (Repeats action until release or timeout)
+    #########################################################
+    - conditions:
+        - condition: trigger
+          id: [zha-down-hold, z2m-down-hold]
+      sequence:
+        - repeat:
+            sequence:
+              - choose: !input action_down_hold
+              - delay:
+                  milliseconds: 80
+            until:
+              # Condition 1: STOP if release event is received
+              - condition: trigger
+                id: [zha-release, z2m-up-down-release]
+              # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
+              - condition: template
+                value_template: "{{ repeat.index >= 250 }}"
+    #########################################################
+    # RIGHT HOLD LOOP (Repeats action until release or timeout)
+    #########################################################
+    - conditions:
+        - condition: trigger
+          id: [zha-right-hold, z2m-right-hold]
+      sequence:
+        - repeat:
+            sequence:
+              - choose: !input action_right_hold
+              - delay:
+                  milliseconds: 80
+            until:
+              # Condition 1: STOP if release event is received
+              - condition: trigger
+                id: [zha-left-right-release, z2m-right-release]
+              # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
+              - condition: template
+                value_template: "{{ repeat.index >= 250 }}"
+    #########################################################
+    # LEFT HOLD LOOP (Repeats action until release or timeout)
+    #########################################################
+    - conditions:
+        - condition: trigger
+          id: [zha-left-hold, z2m-left-hold]
+      sequence:
+        - repeat:
+            sequence:
+              - choose: !input action_left_hold
+              - delay:
+                  milliseconds: 80
+            until:
+              # Condition 1: STOP if release event is received
+              - condition: trigger
+                id: [zha-left-right-release, z2m-left-release]
+              # Condition 2: Failsafe stop after 250 loops (approx. 20 seconds)
+              - condition: template
+                value_template: "{{ repeat.index >= 250 }}"

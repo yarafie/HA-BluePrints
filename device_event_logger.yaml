@@ -59,13 +59,13 @@ triggers:
     id: zha
     event_type: zha_event
     event_data:
-      device_id: !input device_watched
+      device_id: !input device_logged
   # deCONZ
   - trigger: event
     id: deconz-event
     event_type: deconz
     event_data:
-      device_id: !input device_watched
+      device_id: !input device_logged
 # ─────────────────────────────────────────────
 # ACTIONS — Auto Z2M filter, Append, History, YAML output
 # ─────────────────────────────────────────────

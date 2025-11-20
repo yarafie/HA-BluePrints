@@ -92,45 +92,45 @@ actions:
           - stop: "Skipping Zigbee2MQTT event from another device."
     default: []
 
-  # 3) Build compact event info (no large payload!)
+  # --- Extract event value for each integration ---
   - variables:
-      trig_type: >
+      event_value: >
         {% if trigger.id == 'z2m' %}
           {{ trigger.payload }}
         {% elif trigger.id == 'zha' %}
-          {{ trigger.event.event_data.command }}
+          {{ trigger.event.command }}
         {% elif trigger.id == 'deconz' %}
-          {{ trigger.event.event_data.event }}
+          {{ trigger.event.event }}
         {% else %}
           unknown
         {% endif %}
 
-      new_entry: >
-        {{ {"t": ts, "dev": dev_name, "src": trigger.id, "ev": trig_type} | tojson }}
-
-  # 4) Read existing log value safely
+  # --- Build a single-line entry ---
   - variables:
-      raw: "{{ states(log_helper_var) or '' }}"
+      new_line: "{{ ts }} | {{ dev_name }} | {{ trigger.id }} | {{ event_value }}"
 
-      # Convert to a list safely without using from_json incorrectly
-      old_list: >
-        {% if raw.startswith('[') and raw.endswith(']') %}
-          {{ raw }}
-        {% else %}
+  # --- Load existing lines (plain text), split by '\n' safely ---
+  - variables:
+      existing: "{{ states(log_helper_var) | default('') }}"
+      existing_lines: >
+        {% if existing.strip() == '' %}
           []
+        {% else %}
+          {{ existing.split('\n') }}
         {% endif %}
 
-      list_parsed: "{{ old_list | from_json }}"
-
-  # 5) Append and trim
+  # --- Append new line + enforce max lines ---
   - variables:
-      updated_list: "{{ list_parsed + [ new_entry | from_json ] }}"
-      trimmed_list: "{{ updated_list[-max_history_var:] }}"
-      final_json: "{{ trimmed_list | tojson }}"
+      updated_lines: >
+        {% set temp = existing_lines + [new_line] %}
+        {{ temp[-max_lines_var:] }}
 
-  # 6) Write back
+      final_text: >
+        {{ updated_lines | join('\n') }}
+
+  # --- Save final text back to input_text ---
   - action: input_text.set_value
     target:
       entity_id: "{{ log_helper_var }}"
     data:
-      value: "{{ final_json }}"
+      value: "{{ final_text }}"

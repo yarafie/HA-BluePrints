@@ -14,7 +14,6 @@ blueprint:
 
     ⚠️ NOTE: You MUST manually create an input_text helper first.
 
-
   homeassistant:
     min_version: 2024.10.0
   source_url: https://github.com/yarafie/HA-BluePrints/blob/main/device_event_logger.yaml
@@ -22,7 +21,7 @@ blueprint:
 # Define UI and default values
   input:
     # Device Selector
-    device_watched:
+    device_logged:
       name: Device to Watch
       description: The device whose events will be logged.
       selector:
@@ -53,61 +52,61 @@ max_exceeded: silent
 triggers:
   # Zigbee2MQTT (trigger everything; filter later)
   - trigger: mqtt
-    id: zigbee2mqtt-event
+    id: z2m
     topic: zigbee2mqtt/+/action
   # ZHA
   - trigger: event
-    id: zha-event
+    id: zha
     event_type: zha_event
     event_data:
       device_id: !input device_watched
   # deCONZ
   - trigger: event
     id: deconz-event
-    event_type: deconz_event
+    event_type: deconz
     event_data:
       device_id: !input device_watched
 # ─────────────────────────────────────────────
 # ACTIONS — Auto Z2M filter, Append, History, YAML output
 # ─────────────────────────────────────────────
 actions:
-  # Define all blueprint inputs
+  # 1) Resolve inputs and derive identifiers
   - variables:
-  # 1. Auto-detect Zigbee2MQTT Friendly Name
-      # Store blueprint inputs first
-      device_id_var: !input device_watched
+      device_id_var: !input device_logged
       log_helper_var: !input log_helper
       max_history_var: !input max_history
 
-      # Read device identifiers (Z2M ID stored here)
+      # Device identifiers, e.g. {('mqtt', 'zigbee2mqtt_0x94b216fffeefcc59')}
       identifiers: "{{ device_attr(device_id_var, 'identifiers') }}"
-      # Extract Zigbee2MQTT device name from identifiers
+
+      # Extract MQTT/Z2M device name from identifiers
       z2m_name: >
         {% set result = '' %}
         {% for item in identifiers %}
-          {% if item is iterable and item|length == 2 and item[0] == 'zigbee2mqtt' %}
+          {% if item[0] == 'mqtt' %}
             {% set result = item[1] %}
           {% endif %}
         {% endfor %}
         {{ result }}
-      # Readable device name
+
+      # Human readable device name
       dev_name: "{{ device_attr(device_id_var, 'name') }}"
 
       # Timestamp
       ts: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
 
-  # 2. Zigbee2MQTT filter (stop if MQTT topic doesn't match this device)
+  # 2) Filter Z2M: only keep events for this specific device
   - choose:
       - conditions: >
-          {{ trigger.id == 'zigbee2mqtt-event'
+          {{ trigger.id == 'z2m'
+             and z2m_name != ''
              and trigger.topic != ('zigbee2mqtt/' ~ z2m_name ~ '/action') }}
         sequence:
-          - stop: "Ignoring Z2M event from other device."
+          - stop: "Skipping Zigbee2MQTT event from another device."
     default: []
 
-  # 3. Build new JSON entry
+  # 3) Build new log entry as JSON string
   - variables:
-      payload: "{{ trigger | tojson }}"
       new_entry: >
         {{
           {
@@ -115,59 +114,29 @@ actions:
             "device": dev_name,
             "source": trigger.id,
             "event": trigger
-          }
-          | tojson
+          } | tojson
         }}
 
-  # 4. Load existing text and convert YAML → list of JSON objects
+  # 4) Load existing log (JSON array) from input_text
   - variables:
       raw_text: "{{ states[log_helper_var] | default('') }}"
-
-      json_list: >
-        {# If empty, return empty list #}
-        {% if not raw_text or raw_text|trim == '' %}
-          []
+      existing_json: >
+        {% if raw_text|trim != '' %}
+          {{ raw_text }}
         {% else %}
-          [
-          {%- for block in raw_text.split('- time: ')[1:] -%}
-            {%- set lines = ('time: ' ~ block).split('\n') -%}
-            {
-              "time": "{{ lines[0].split(': ',1)[1] }}",
-              "device": "{{ lines[1].split(': ',1)[1] }}",
-              "event": {{ lines[2].split(': ',1)[1] }}
-            }
-            {%- if not loop.last %},{% endif -%}
-          {%- endfor -%}
-          ]
+          {{ [] | tojson }}
         {% endif %}
 
-  # 5. Append new entry
+  # 5) Append new entry and trim to max_history_var
   - variables:
-      updated: >
-        {{ (json_list + [ new_entry | from_json ]) | tojson }}
+      updated_json: >
+        {{ (existing_json | from_json + [ new_entry | from_json ]) | tojson }}
+      trimmed_json: >
+        {{ (updated_json | from_json)[-max_history_var:] | tojson }}
 
-  # 6. Enforce max history limit
-  - variables:
-      trimmed: >
-        {{
-          (updated | from_json)[-max_history_var:]
-          | tojson
-        }}
-
-  # 7. Convert JSON list → YAML list for final storage
-  - variables:
-      final_output: >
-        {% set items = trimmed | from_json %}
-        {%- for item in items %}
-        - time: {{ item.time }}
-          device: {{ item.device }}
-          source: {{ item.source }}
-          event: {{ item.event | tojson }}
-        {%- endfor %}
-
-  # 8. Write YAML into the input_text helper
+  # 6) Write JSON array back to the helper
   - action: input_text.set_value
     target:
       entity_id: "{{ log_helper_var }}"
     data:
-      value: "{{ final_output }}"
+      value: "{{ trimmed_json }}"

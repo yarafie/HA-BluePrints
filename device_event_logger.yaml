@@ -119,24 +119,20 @@ actions:
 
   # 4) Load existing JSON list safely
   - variables:
-      raw_text: "{{ states(log_helper_var) | default('') }}"
-      parsed_list: >
-        {% if raw_text|trim == '' or raw_text|trim == 'unknown' %}
-          []
+      raw_text: "{{ states(log_helper_var) | string | trim }}"
+      existing_json: >
+        {% if raw_text in ['', 'unknown', 'None', 'null'] %}
+          {{ [] | tojson }}
         {% else %}
-          {% if raw_text.startswith('[') %}
-            {{ raw_text | from_json }}
-          {% else %}
-            []
-          {% endif %}
+          {{ raw_text }}
         {% endif %}
 
-  # 5) Append new entry and enforce max history
+  # 5) Append and trim
   - variables:
-      new_dict: "{{ new_entry | from_json }}"
-      new_list: "{{ parsed_list + [ new_dict ] }}"
-      trimmed_list: "{{ new_list[-max_history_var:] }}"
-      final_json: "{{ trimmed_list | tojson }}"
+      updated_json: "{{ (existing_json | from_json) + [ new_entry | from_json ] }}"
+      trimmed_json: "{{ updated_json[-max_history_var:] | tojson }}"
+
+      final_json: "{{ trimmed_jsom | tojson }}"
 
   # 6) Save JSON array back to input_text
   - action: input_text.set_value

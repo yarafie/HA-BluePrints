@@ -156,7 +156,14 @@ actions:
 
   # 7. Convert JSON list → YAML list for final storage
   - variables:
-      final_output: "{{ trimmed | from_json | to_yaml }}"
+      final_output: >
+        {% set items = trimmed | from_json %}
+        {%- for item in items %}
+        - time: {{ item.time }}
+          device: {{ item.device }}
+          source: {{ item.source }}
+          event: {{ item.event | tojson }}
+        {%- endfor %}
 
   # 8. Write YAML into the input_text helper
   - action: input_text.set_value

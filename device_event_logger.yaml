@@ -117,26 +117,30 @@ actions:
           } | tojson
         }}
 
-  # 4) Load existing log (JSON array) from input_text
+  # 4) Load existing JSON list safely
   - variables:
       raw_text: "{{ states(log_helper_var) | default('') }}"
-      existing_json: >
-        {% if raw_text|trim != '' %}
-          {{ raw_text }}
+      parsed_list: >
+        {% if raw_text|trim == '' or raw_text|trim == 'unknown' %}
+          []
         {% else %}
-          {{ [] | tojson }}
+          {% if raw_text.startswith('[') %}
+            {{ raw_text | from_json }}
+          {% else %}
+            []
+          {% endif %}
         {% endif %}
 
-  # 5) Append new entry and trim to max_history_var
+  # 5) Append new entry and enforce max history
   - variables:
-      updated_json: >
-        {{ (existing_json | from_json + [ new_entry | from_json ]) | tojson }}
-      trimmed_json: >
-        {{ (updated_json | from_json)[-max_history_var:] | tojson }}
+      new_dict: "{{ new_entry | from_json }}"
+      new_list: "{{ parsed_list + [ new_dict ] }}"
+      trimmed_list: "{{ new_list[-max_history_var:] }}"
+      final_json: "{{ trimmed_list | tojson }}"
 
-  # 6) Write JSON array back to the helper
+  # 6) Save JSON array back to input_text
   - action: input_text.set_value
     target:
       entity_id: "{{ log_helper_var }}"
     data:
-      value: "{{ trimmed_json }}"
+      value: "{{ final_json }}"

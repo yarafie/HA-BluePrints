@@ -3,9 +3,14 @@ blueprint:
   author: yarafie
   domain: automation
   description: >
-    Logs all events (Z2M, ZHA, deCONZ) into an input_text helper using YAML list format.
-    Automatically filters Zigbee2MQTT events so only the selected device is logged.
-    Automatically appends entries and trims the list to a maximum size.
+    Logs all events (Zigbee2MQTT, ZHA, deCONZ) for a selected device
+    into an input_text helper as a YAML list.
+
+    Features:
+      • Auto-detect Zigbee2MQTT device name from its entities
+      • Append mode (never overwrites)
+      • Maximum history size (oldest entries removed automatically)
+      • Fully safe with queued mode (avoids race conditions)
 
     ⚠️ NOTE: You MUST manually create an input_text helper first.
 
@@ -25,14 +30,14 @@ blueprint:
     # Log Text Helper
     log_helper:
       name: Text Helper Target
-      description: input_text helper storing YAML list of events.
+      description: Input_text entity storing the YAML log list.
       selector:
         entity:
           domain: input_text
     # Max History of Log
     max_history:
       name: Max History Entries
-      description: Max number of YAML log entries to keep.
+      description: Maximum number of YAML entries to keep.
       default: 50
       selector:
         number:
@@ -40,8 +45,8 @@ blueprint:
           max: 1000
           mode: slider
 mode: queued
-max_exceeded: silent
 max: 100
+max_exceeded: silent
 # ─────────────────────────────────────────────
 # TRIGGERS — Z2M, ZHA, deCONZ
 # ─────────────────────────────────────────────
@@ -63,21 +68,24 @@ triggers:
     event_data:
       device_id: !input device_watched
 # ─────────────────────────────────────────────
-# ACTIONS — Auto Z2M Filter, Append, History Limit
+# ACTIONS — Auto Z2M filter, Append, History, YAML output
 # ─────────────────────────────────────────────
 actions:
-  # 1. Auto-detect Zigbee2MQTT friendly name from device entities
+  # Define all blueprint inputs
   - variables:
-      # First capture the device_id from the blueprint input
-      device_id: !input device_watched
-      # All entities under selected device
-      dev_entities: "{{ device_entities(device_id) }}"
-      # First entity name (e.g., sensor.ikea_styrbar_action)
+  # 1. Auto-detect Zigbee2MQTT Friendly Name
+      # Store blueprint inputs first
+      device_id_var: !input device_watched
+      log_helper_var: !input log_helper
+      max_history_var: !input max_history
+      # Get all entities under the selected device
+      dev_entities: "{{ device_entities(device_id_var) }}"
+      # First entity name (e.g., sensor.ikea_styrbar_lr_action)
       first_entity: "{{ dev_entities[0] if dev_entities|length > 0 else '' }}"
-      # Extract object_id (ikea_styrbar_action)
-      object_id: "{{ first_entity.split('.')[1] if first_entity != '' else '' }}"
+      # Extract object_id from entity (ikea_styrbar_lr_action)
+      object_id: "{{ first_entity.split('.')[1] if first_entity else '' }}"
 
-      # Remove any trailing _action or _button or _click etc.
+      # Clean up Zigbee2MQTT friendly name
       z2m_name: >
         {% set name = object_id %}
         {% if name.endswith('_action') %}
@@ -90,56 +98,57 @@ actions:
           {{ name }}
         {% endif %}
 
-  # 2. Filter Zigbee2MQTT so only this device is logged
+      # Readable device name
+      dev_name: "{{ device_attr(device_id_var, 'name') }}"
+
+      # Timestamp
+      ts: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+
+  # 2. Zigbee2MQTT filter (stop if MQTT topic doesn't match this device)
   - choose:
       - conditions: >
-          {{ trigger.id == 'zigbee2mqtt-event' and
-             trigger.topic == 'zigbee2mqtt/' ~ z2m_name ~ '/action' }}
-        sequence: []
+          {{ trigger.id == 'zigbee2mqtt-event'
+             and trigger.topic != ('zigbee2mqtt/' ~ z2m_name ~ '/action') }}
+        sequence:
+          - stop: "Ignoring Z2M event from other device."
+    default: []
 
-      - conditions: "{{ trigger.id != 'zigbee2mqtt-event' }}"
-        sequence: []
-
-    default:
-      # If Z2M event does NOT match selected device → stop
-      - stop: "MQTT event does not match selected Z2M device."
 
   # 3. Build new YAML entry
   - variables:
-      ts: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
-      dev_name: "{{ device_attr((!input device_watched), 'name') }}"
       payload: "{{ trigger | tojson }}"
-
       new_entry_yaml: >
         - time: {{ ts }}
           device: {{ dev_name }}
           event: {{ payload }}
 
-  # 4. Load existing YAML from helper
+
+  # 4. Load existing YAML history from input_text
   - variables:
       existing_yaml: >
-        {%- if states[ (!input log_helper) ] | trim != '' -%}
-          {{ states[ (!input log_helper) ] | from_yaml }}
-        {%- else -%}
+        {% if states[log_helper_var] | trim != '' %}
+          {{ states[log_helper_var] | from_yaml }}
+        {% else %}
           []
-        {%- endif -%}
+        {% endif %}
 
   # 5. Append new entry
   - variables:
       combined_yaml: "{{ existing_yaml + (new_entry_yaml | from_yaml) }}"
 
-  # 6. Trim to max history
+  # 6. Enforce max history limit
   - variables:
       trimmed_yaml: >
-        {{ combined_yaml | slice(-1 * (!input max_history)) }}
+        {{ combined_yaml | slice(-1 * max_history_var) }}
 
-  # 7. Convert list back to YAML text
+  # 7. Convert list back into YAML formatted text
   - variables:
       final_output: "{{ trimmed_yaml | to_yaml }}"
 
-  # 8. Write YAML back to helper
+  # 8. Write YAML into the input_text helper
   - action: input_text.set_value
     target:
-      entity_id: !input log_helper
+      entity_id: "{{ log_helper_var }}"
     data:
       value: "{{ final_output }}"

@@ -73,7 +73,7 @@ Additionaly, virtual double press actions was also added to any of the buttons w
 
 ## device_event_logger.yaml
 * **Name:** Device Event Logger
-* **Description:** <br>
+* **Description:**
 <br>Logs all events (Z2M, ZHA, deCONZ) into an input_text helper using YAML list format.
 <br>Automatically filters Zigbee2MQTT events so only the selected device is logged.
 <br>Automatically appends entries and trims the list to a maximum size.

@@ -30,8 +30,9 @@ These blueprints have been tested and work for all my devices and will work with
 * model: STYRBAR remote control (E2001/E2002)
 
 <a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fz2m-IKEA-styrbar_E2001_E2002.yaml" target="_blank" rel="noreferrer noopener"><img src="https://my.home-assistant.io/badges/blueprint_import.svg" alt="Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled." /></a>
+<!-- 
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fz2m-IKEA-styrbar_E2001_E2002.yaml)
-
+-->
 
 ## Changelog: 
 * 19, April 2025: Strybar Blueprint was expanded to add an optional looping for any of the long button presses. This needs to be enabled in the blueprint. 
@@ -78,4 +79,6 @@ Additionaly, virtual double press actions was also added to any of the buttons w
 <br>Automatically appends entries and trims the list to a maximum size.</br>
 
 <a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fdevice_event_logger.yaml" target="_blank" rel="noreferrer noopener"><img src="https://my.home-assistant.io/badges/blueprint_import.svg" alt="Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled." /></a>
+<!-- 
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fdevice_event_logger.yaml)
+-->

@@ -92,50 +92,46 @@ actions:
           - stop: "Skipping Zigbee2MQTT event from another device."
     default: []
 
-  # Extract minimal action payload depending on integration
+---
+  # 3) Build compact event info (no large payload!)
   - variables:
-      action_value: >
+      trig_type: >
         {% if trigger.id == 'z2m' %}
           {{ trigger.payload }}
         {% elif trigger.id == 'zha' %}
-          {{ trigger.event.command }}
+          {{ trigger.event.event_data.command }}
         {% elif trigger.id == 'deconz' %}
-          {{ trigger.event.event }}
+          {{ trigger.event.event_data.event }}
         {% else %}
-          "?"
+          unknown
         {% endif %}
 
-  # 3) Build new log entry as JSON string
-  - variables:
       new_entry: >
-        {{
-          {
-            "t": ts,
-            "d": dev_name,
-            "s": trigger.id,
-            "a": action_value
-          } | tojson
-        }}
+        {{ {"t": ts, "dev": dev_name, "src": trigger.id, "ev": trig_type} | tojson }}
 
-  # 4) Load existing JSON list safely
+  # 4) Read existing log value safely
   - variables:
-      raw: "{{ states(log_helper_var) | default('') }}"
-      log_list: >
-        {% if raw|trim == '' or raw|trim == 'unknown' %}
-          []
+      raw: "{{ states(log_helper_var) or '' }}"
+
+      # Convert to a list safely without using from_json incorrectly
+      old_list: >
+        {% if raw.startswith('[') and raw.endswith(']') %}
+          {{ raw }}
         {% else %}
-          {{ raw | from_json }}
+          []
         {% endif %}
+
+      list_parsed: "{{ old_list | from_json }}"
 
   # 5) Append and trim
   - variables:
-      updated: "{{ (log_list + [ new_entry | from_json ]) }}"
-      trimmed: "{{ updated[-max_hist:] }}"
-      final: "{{ trimmed | tojson }}"
+      updated_list: "{{ list_parsed + [ new_entry | from_json ] }}"
+      trimmed_list: "{{ updated_list[-max_history_var:] }}"
+      final_json: "{{ trimmed_list | tojson }}"
 
-  # 6) Save JSON array back to input_text
+  # 6) Write back
   - action: input_text.set_value
     target:
       entity_id: "{{ log_helper_var }}"
     data:
-      value: "{{ final }}"
+      value: "{{ final_json }}"

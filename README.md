@@ -8,8 +8,10 @@ Notable mention goes to damru https://github.com/damru/ha-blueprints
 which I based my blueprints from his blueprints.
 These blueprints have been tested and work for all my devices and will work with z2m > 2.0.0 (Hopefully :)).
 
-Current Devices Supported by each blueprint:
---------------------------------------------
+## --------------------------------------------
+## Current Devices Supported by each blueprint:
+## --------------------------------------------
+
 # z2m-IKEA-rodret_E2201-tradfri_E1743-somrig_E2213-control_anything.yaml
 * model: RODRET wireless dimmer/power switch (E2201)
 * model: TRADFRI on/off switch (E1743)
@@ -68,3 +70,18 @@ Additionaly, virtual double press actions was also added to any of the buttons w
 * model: Wireless switch with 4 buttons (TS0044)
 
 <a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fz2m-+TUYA-tuya_ts0044-moes_ZT-SR-EU4-4_button_wireless_scene_switch.yaml" target="_blank" rel="noreferrer noopener"><img src="https://my.home-assistant.io/badges/blueprint_import.svg" alt="Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled." /></a>
+
+## ----------------------------------------
+## Some General Purpose Utility Blueprints:
+## ----------------------------------------
+
+# device_event_logger.yaml
+* **Name:** Device Event Logger
+* **Description:** 
+    Logs all events (Z2M, ZHA, deCONZ) into an input_text helper using YAML list format.
+
+    Automatically filters Zigbee2MQTT events so only the selected device is logged.
+
+    Automatically appends entries and trims the list to a maximum size.
+
+<a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fdevice_event_logger.yaml" target="_blank" rel="noreferrer noopener"><img src="https://my.home-assistant.io/badges/blueprint_import.svg" alt="Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled." /></a>

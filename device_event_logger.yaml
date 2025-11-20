@@ -76,20 +76,20 @@ actions:
       log_helper_var: !input log_helper
       max_history_var: !input max_history
 
-      # Device identifiers, e.g. {('mqtt', 'zigbee2mqtt_0x94b216fffeefcc59')}
-      identifiers: "{{ device_attr(device_id_var, 'identifiers') }}"
+#      # Device identifiers, e.g. {('mqtt', 'zigbee2mqtt_0x94b216fffeefcc59')}
+#      identifiers: "{{ device_attr(device_id_var, 'identifiers') }}"
+#
+#      # Extract MQTT/Z2M device name from identifiers
+#      z2m_name: >
+#        {% set result = '' %}
+#        {% for item in identifiers %}
+#          {% if item[0] == 'mqtt' %}
+#            {% set result = item[1] %}
+#          {% endif %}
+#        {% endfor %}
+#        {{ result }}
 
-      # Extract MQTT/Z2M device name from identifiers
-      z2m_name: >
-        {% set result = '' %}
-        {% for item in identifiers %}
-          {% if item[0] == 'mqtt' %}
-            {% set result = item[1] %}
-          {% endif %}
-        {% endfor %}
-        {{ result }}
-
-      # Human readable device name
+      # Human readable device name this is usually the devices friendly name
       dev_name: "{{ device_attr(device_id_var, 'name') }}"
 
       # Timestamp
@@ -99,8 +99,8 @@ actions:
   - choose:
       - conditions: >
           {{ trigger.id == 'z2m'
-             and z2m_name != ''
-             and trigger.topic != ('zigbee2mqtt/' ~ z2m_name ~ '/action') }}
+             and dev_name != ''
+             and trigger.topic != ('zigbee2mqtt/' ~ dev_name ~ '/action') }}
         sequence:
           - stop: "Skipping Zigbee2MQTT event from another device."
     default: []

@@ -78,25 +78,18 @@ actions:
       device_id_var: !input device_watched
       log_helper_var: !input log_helper
       max_history_var: !input max_history
-      # Get all entities under the selected device
-      dev_entities: "{{ device_entities(device_id_var) }}"
-      # First entity name (e.g., sensor.ikea_styrbar_lr_action)
-      first_entity: "{{ dev_entities[0] if dev_entities|length > 0 else '' }}"
-      # Extract object_id from entity (ikea_styrbar_lr_action)
-      object_id: "{{ first_entity.split('.')[1] if first_entity else '' }}"
 
-      # Clean up Zigbee2MQTT friendly name
+      # Read device identifiers (Z2M ID stored here)
+      identifiers: "{{ device_attr(device_id_var, 'identifiers') }}"
+      # Extract Zigbee2MQTT device name from identifiers
       z2m_name: >
-        {% set name = object_id %}
-        {% if name.endswith('_action') %}
-          {{ name[:-7] }}
-        {% elif name.endswith('_click') %}
-          {{ name[:-6] }}
-        {% elif name.endswith('_button') %}
-          {{ name[:-7] }}
-        {% else %}
-          {{ name }}
-        {% endif %}
+        {% set result = '' %}
+        {% for item in identifiers %}
+          {% if item is iterable and item|length == 2 and item[0] == 'zigbee2mqtt' %}
+            {% set result = item[1] %}
+          {% endif %}
+        {% endfor %}
+        {{ result }}
 
       # Readable device name
       dev_name: "{{ device_attr(device_id_var, 'name') }}"

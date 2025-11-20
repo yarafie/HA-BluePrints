@@ -92,7 +92,6 @@ actions:
           - stop: "Skipping Zigbee2MQTT event from another device."
     default: []
 
----
   # 3) Build compact event info (no large payload!)
   - variables:
       trig_type: >

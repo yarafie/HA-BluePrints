@@ -119,7 +119,7 @@ actions:
 
   # 4) Load existing log (JSON array) from input_text
   - variables:
-      raw_text: "{{ states[log_helper_var] | default('') }}"
+      raw_text: "{{ states(log_helper_var) | default('') }}"
       existing_json: >
         {% if raw_text|trim != '' %}
           {{ raw_text }}

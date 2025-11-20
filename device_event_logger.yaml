@@ -90,13 +90,11 @@ actions:
           {% endif %}
         {% endfor %}
         {{ result }}
-
       # Readable device name
       dev_name: "{{ device_attr(device_id_var, 'name') }}"
 
       # Timestamp
       ts: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
-
 
   # 2. Zigbee2MQTT filter (stop if MQTT topic doesn't match this device)
   - choose:
@@ -107,37 +105,58 @@ actions:
           - stop: "Ignoring Z2M event from other device."
     default: []
 
-
-  # 3. Build new YAML entry
+  # 3. Build new JSON entry
   - variables:
       payload: "{{ trigger | tojson }}"
-      new_entry_yaml: >
-        - time: {{ ts }}
-          device: {{ dev_name }}
-          event: {{ payload }}
+      new_entry: >
+        {{
+          {
+            "time": ts,
+            "device": dev_name,
+            "source": trigger.id,
+            "event": trigger
+          }
+          | tojson
+        }}
 
-
-  # 4. Load existing YAML history from input_text
+  # 4. Load existing text and convert YAML → list of JSON objects
   - variables:
-      existing_yaml: >
-        {% if states[log_helper_var] | trim != '' %}
-          {{ states[log_helper_var] | from_yaml }}
-        {% else %}
+      raw_text: "{{ states[log_helper_var] | default('') }}"
+
+      json_list: >
+        {# If empty, return empty list #}
+        {% if not raw_text or raw_text|trim == '' %}
           []
+        {% else %}
+          [
+          {%- for block in raw_text.split('- time: ')[1:] -%}
+            {%- set lines = ('time: ' ~ block).split('\n') -%}
+            {
+              "time": "{{ lines[0].split(': ',1)[1] }}",
+              "device": "{{ lines[1].split(': ',1)[1] }}",
+              "event": {{ lines[2].split(': ',1)[1] }}
+            }
+            {%- if not loop.last %},{% endif -%}
+          {%- endfor -%}
+          ]
         {% endif %}
 
   # 5. Append new entry
   - variables:
-      combined_yaml: "{{ existing_yaml + (new_entry_yaml | from_yaml) }}"
+      updated: >
+        {{ (json_list + [ new_entry | from_json ]) | tojson }}
 
   # 6. Enforce max history limit
   - variables:
-      trimmed_yaml: >
-        {{ combined_yaml | slice(-1 * max_history_var) }}
+      trimmed: >
+        {{
+          (updated | from_json)[-max_history_var:]
+          | tojson
+        }}
 
-  # 7. Convert list back into YAML formatted text
+  # 7. Convert JSON list → YAML list for final storage
   - variables:
-      final_output: "{{ trimmed_yaml | to_yaml }}"
+      final_output: "{{ trimmed | from_json | to_yaml }}"
 
   # 8. Write YAML into the input_text helper
   - action: input_text.set_value

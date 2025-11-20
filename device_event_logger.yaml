@@ -68,12 +68,12 @@ triggers:
 actions:
   # 1. Auto-detect Zigbee2MQTT friendly name from device entities
   - variables:
+      # First capture the device_id from the blueprint input
+      device_id: !input device_watched
       # All entities under selected device
-      dev_entities: "{{ device_entities(!input device_watched) }}"
-
+      dev_entities: "{{ device_entities(device_id) }}"
       # First entity name (e.g., sensor.ikea_styrbar_action)
       first_entity: "{{ dev_entities[0] if dev_entities|length > 0 else '' }}"
-
       # Extract object_id (ikea_styrbar_action)
       object_id: "{{ first_entity.split('.')[1] if first_entity != '' else '' }}"
 

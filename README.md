@@ -73,10 +73,10 @@ Additionaly, virtual double press actions was also added to any of the buttons w
 
 ## device_event_logger.yaml
 * **Name:** Device Event Logger
-* **Description:** 
-<br>Logs all events (Z2M, ZHA, deCONZ) into an input_text helper using YAML list format.</br>
-<br>Automatically filters Zigbee2MQTT events so only the selected device is logged.</br>
-<br>Automatically appends entries and trims the list to a maximum size.</br>
+* **Description:** <br>
+<br>Logs all events (Z2M, ZHA, deCONZ) into an input_text helper using YAML list format.
+<br>Automatically filters Zigbee2MQTT events so only the selected device is logged.
+<br>Automatically appends entries and trims the list to a maximum size.
 
 <a href="https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fdevice_event_logger.yaml" target="_blank" rel="noreferrer noopener"><img src="https://my.home-assistant.io/badges/blueprint_import.svg" alt="Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled." /></a>
 <!-- 

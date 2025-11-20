@@ -76,19 +76,6 @@ actions:
       log_helper_var: !input log_helper
       max_history_var: !input max_history
 
-#      # Device identifiers, e.g. {('mqtt', 'zigbee2mqtt_0x94b216fffeefcc59')}
-#      identifiers: "{{ device_attr(device_id_var, 'identifiers') }}"
-#
-#      # Extract MQTT/Z2M device name from identifiers
-#      z2m_name: >
-#        {% set result = '' %}
-#        {% for item in identifiers %}
-#          {% if item[0] == 'mqtt' %}
-#            {% set result = item[1] %}
-#          {% endif %}
-#        {% endfor %}
-#        {{ result }}
-
       # Human readable device name this is usually the devices friendly name
       dev_name: "{{ device_attr(device_id_var, 'name') }}"
 
@@ -118,46 +105,37 @@ actions:
           "?"
         {% endif %}
 
-
   # 3) Build new log entry as JSON string
   - variables:
       new_entry: >
         {{
           {
-            "time": ts,
-            "source": trigger.id,
-            "device": dev_name,
-            "action": action_value
+            "t": ts,
+            "d": dev_name,
+            "s": trigger.id,
+            "a": action_value
           } | tojson
         }}
 
   # 4) Load existing JSON list safely
   - variables:
-      raw_text: "{{ states(log_helper_var) | default('') | trim }}"
-      # Normalize raw_text into JSON list
-      existing_list: >
-        {% if raw_text == '' or raw_text == 'unknown' %}
+      raw: "{{ states(log_helper_var) | default('') }}"
+      log_list: >
+        {% if raw|trim == '' or raw|trim == 'unknown' %}
           []
-        {% elif raw_text is string and raw_text | is_json %}
-          {{ raw_text | from_json }}
         {% else %}
-          []
+          {{ raw | from_json }}
         {% endif %}
 
   # 5) Append and trim
   - variables:
-      updated_list: >
-        {{ existing_list + [ new_entry | from_json ] }}
-
-      trimmed_list: >
-        {{ updated_list[-max_history_var:] }}
-
-      final_json: "{{ trimmed_list | tojson }}"
-
+      updated: "{{ (log_list + [ new_entry | from_json ]) }}"
+      trimmed: "{{ updated[-max_hist:] }}"
+      final: "{{ trimmed | tojson }}"
 
   # 6) Save JSON array back to input_text
   - action: input_text.set_value
     target:
       entity_id: "{{ log_helper_var }}"
     data:
-      value: "{{ final_json }}"
+      value: "{{ final }}"

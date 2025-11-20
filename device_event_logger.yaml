@@ -105,15 +105,29 @@ actions:
           - stop: "Skipping Zigbee2MQTT event from another device."
     default: []
 
+  # Extract minimal action payload depending on integration
+  - variables:
+      action_value: >
+        {% if trigger.id == 'z2m' %}
+          {{ trigger.payload }}
+        {% elif trigger.id == 'zha' %}
+          {{ trigger.event.command }}
+        {% elif trigger.id == 'deconz' %}
+          {{ trigger.event.event }}
+        {% else %}
+          "?"
+        {% endif %}
+
+
   # 3) Build new log entry as JSON string
   - variables:
       new_entry: >
         {{
           {
             "time": ts,
-            "device": dev_name,
             "source": trigger.id,
-            "event": trigger
+            "device": dev_name,
+            "action": action_value
           } | tojson
         }}
 

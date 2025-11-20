@@ -34,7 +34,7 @@ These blueprints have been tested and work for all my devices and will work with
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fyarafie%2FHA-BluePrints%2Fblob%2Fmain%2Fz2m-IKEA-styrbar_E2001_E2002.yaml)
 -->
 
-## Changelog: 
+### Changelog: 
 * 19, April 2025: Strybar Blueprint was expanded to add an optional looping for any of the long button presses. This needs to be enabled in the blueprint. 
 Two safe guards were added in order to stop any infinite loops, a count was added to loop a finite number of times and also a timeout was added to stop the wait for the release of button. 
 Additionaly, virtual double press actions was also added to any of the buttons which also needs to be exposed.

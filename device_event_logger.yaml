@@ -119,20 +119,27 @@ actions:
 
   # 4) Load existing JSON list safely
   - variables:
-      raw_text: "{{ states(log_helper_var) | string | trim }}"
-      existing_json: >
-        {% if raw_text in ['', 'unknown', 'None', 'null'] %}
-          {{ [] | tojson }}
+      raw_text: "{{ states(log_helper_var) | default('') | trim }}"
+      # Normalize raw_text into JSON list
+      existing_list: >
+        {% if raw_text == '' or raw_text == 'unknown' %}
+          []
+        {% elif raw_text is string and raw_text | is_json %}
+          {{ raw_text | from_json }}
         {% else %}
-          {{ raw_text }}
+          []
         {% endif %}
 
   # 5) Append and trim
   - variables:
-      updated_json: "{{ (existing_json | from_json) + [ new_entry | from_json ] }}"
-      trimmed_json: "{{ updated_json[-max_history_var:] | tojson }}"
+      updated_list: >
+        {{ existing_list + [ new_entry | from_json ] }}
 
-      final_json: "{{ trimmed_jsom | tojson }}"
+      trimmed_list: >
+        {{ updated_list[-max_history_var:] }}
+
+      final_json: "{{ trimmed_list | tojson }}"
+
 
   # 6) Save JSON array back to input_text
   - action: input_text.set_value

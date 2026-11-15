@@ -52,17 +52,17 @@ max_exceeded: silent
 triggers:
   # Zigbee2MQTT (trigger everything; filter later)
   - trigger: mqtt
-    id: z2m
+    id: z2m-trigger
     topic: zigbee2mqtt/+/action
   # ZHA
   - trigger: event
-    id: zha
+    id: zha-trigger
     event_type: zha_event
     event_data:
       device_id: !input device_logged
   # deCONZ
   - trigger: event
-    id: deconz-event
+    id: dcz-trigger
     event_type: deconz
     event_data:
       device_id: !input device_logged
@@ -72,6 +72,7 @@ triggers:
 actions:
   # 1) Resolve inputs and derive identifiers
   - variables:
+      trigger_action: "{{ trigger.id.split('-', 1)[1] }}"
       device_id_var: !input device_logged
       log_helper_var: !input log_helper
       max_history_var: !input max_history
